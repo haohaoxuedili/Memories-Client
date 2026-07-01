@@ -338,16 +338,20 @@ export default function App() {
     }
   }
 
+  function sanitizeKey(raw: string) {
+    return raw.replace(/[\u200B-\u200D\uFEFF\u00A0\u2018\u2019\u201C\u201D\u3002\uFF0C\u3001\u2014\u2026\u300A\u300B\u300C\u300D\u300E\u300F\u2018\u2019\u201C\u201D\uFF01\uFF1F\uFF1A\uFF1B\u2013\u2014\u2022\u2032\u2033\u02C6\u02DC\u203E\u00B4\u2018\u2019\u201A\u201B\u201C\u201D\u201E\u201F\u2039\u203A\u00AB\u00BB\u3000]/g, '').trim();
+  }
+
   async function getAdminToken(adminKey = settings.adminKey) {
-    const trimmedKey = adminKey.trim();
-    if (!trimmedKey) {
+    const cleanKey = sanitizeKey(adminKey);
+    if (!cleanKey) {
       notify('bad', '请先填写管理员 key');
       return null;
     }
     setBusy('token');
     try {
       const url = toUrl(joinUrl(settings.memoriesBaseUrl, settings.adminPath));
-      url.searchParams.set('key', trimmedKey);
+      url.searchParams.set('key', cleanKey);
       const nextToken = await readJson<TokenResponse>(await fetch(url));
       setToken(nextToken);
       notify('good', '管理员 token 已获取');
