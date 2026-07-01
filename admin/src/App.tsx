@@ -277,7 +277,16 @@ export default function App() {
 
   useEffect(() => {
     decryptSettings().then((saved) => {
-      if (saved) setSettings(saved);
+      if (saved) {
+        setSettings(saved);
+      } else {
+        const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        setSettings({
+          ...defaultSettings,
+          memoriesBaseUrl: isLocalDev ? MEMORIES_DEFAULT_BASE : MEMORIES_REMOTE_BASE,
+          publicApiUrl: isLocalDev ? PUBLIC_API_DEFAULT : PUBLIC_API_REMOTE,
+        });
+      }
       setSettingsLoaded(true);
     });
   }, []);
