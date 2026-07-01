@@ -351,7 +351,7 @@ export default function App() {
     }
     setBusy('token');
     try {
-      const url = toUrl(joinUrl(settings.memoriesBaseUrl, settings.adminPath));
+      const url = toUrl(settings.adminPath);
       url.searchParams.set('key', cleanKey);
       const nextToken = await readJson<TokenResponse>(await fetch(url));
       setToken(nextToken);

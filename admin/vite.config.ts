@@ -8,6 +8,10 @@ export default defineConfig({
     port: 5173,
     strictPort: false,
     proxy: {
+      '/admin/token': {
+        target: 'https://memories-api.mrcwoods.com',
+        changeOrigin: true,
+      },
       '/memories-api': {
         target: 'https://memories-api.mrcwoods.com',
         changeOrigin: true,
