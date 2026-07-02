@@ -186,7 +186,7 @@ public class MainActivity extends Activity {
         if (!AppConfig.isOAuthConfigured()) {
             new AlertDialog.Builder(this)
                     .setTitle("OAuth 未配置")
-                    .setMessage("请先填写 app/src/main/assets/app-config.properties 中的 oauth.clientId 和 oauth.clientSecret。")
+                    .setMessage("请先复制 app-config.example.properties 为 app/src/main/assets/app-config.properties，并填写 OAuth 与 API 配置。")
                     .setPositiveButton("确定", null)
                     .show();
             return;

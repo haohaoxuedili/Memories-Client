@@ -2,5 +2,6 @@ Android/.gradle/
 Android/build/
 Android/app/build/
 Android/local.properties
+Android/app/src/main/assets/app-config.properties
 *.apk
 *.aab

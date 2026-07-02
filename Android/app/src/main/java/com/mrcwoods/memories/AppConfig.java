@@ -11,21 +11,21 @@ public final class AppConfig {
     private static final Properties PROPERTIES = new Properties();
 
     public static String APP_NAME = "Memories";
-    public static String SCHOOL_NAME = "桂林市奎光学校";
-    public static String DEVELOPER_NAME = "Mr.C.Woods";
-    public static String DEVELOPER_AVATAR_URL = "https://img.cdn1.vip/i/6a00223138677_1778393649.webp";
-    public static String WEBSITE_URL = "https://memories.mrcwoods.com";
+    public static String SCHOOL_NAME = "";
+    public static String DEVELOPER_NAME = "";
+    public static String DEVELOPER_AVATAR_URL = "";
+    public static String WEBSITE_URL = "";
     public static String UPDATE_DATE = "2026-07-02";
 
-    public static String MEMORIES_API_BASE = "https://memories-api.mrcwoods.com";
-    public static String IMAGE_HOST_API = "https://img.scdn.io/api/v1.php";
+    public static String MEMORIES_API_BASE = "";
+    public static String IMAGE_HOST_API = "";
 
-    public static String OAUTH_ISSUER = "https://kg.campux.top";
-    public static String OAUTH_AUTHORIZE_URL = "https://kg.campux.top/oauth/authorize";
-    public static String OAUTH_TOKEN_URL = "https://kg.campux.top/oauth/token";
-    public static String OAUTH_USERINFO_URL = "https://kg.campux.top/oauth/userinfo";
-    public static String OAUTH_REVOKE_URL = "https://kg.campux.top/oauth/revoke";
-    public static String OAUTH_INTROSPECT_URL = "https://kg.campux.top/oauth/introspect";
+    public static String OAUTH_ISSUER = "";
+    public static String OAUTH_AUTHORIZE_URL = "";
+    public static String OAUTH_TOKEN_URL = "";
+    public static String OAUTH_USERINFO_URL = "";
+    public static String OAUTH_REVOKE_URL = "";
+    public static String OAUTH_INTROSPECT_URL = "";
     public static String OAUTH_CLIENT_ID = "";
     public static String OAUTH_CLIENT_SECRET = "";
     public static String OAUTH_REDIRECT_URI = "http://localhost:2580";
@@ -93,7 +93,11 @@ public final class AppConfig {
     }
 
     public static boolean isOAuthConfigured() {
-        return !OAUTH_CLIENT_ID.trim().isEmpty() && !OAUTH_CLIENT_SECRET.trim().isEmpty();
+        return !OAUTH_AUTHORIZE_URL.trim().isEmpty()
+                && !OAUTH_TOKEN_URL.trim().isEmpty()
+                && !OAUTH_USERINFO_URL.trim().isEmpty()
+                && !OAUTH_CLIENT_ID.trim().isEmpty()
+                && !OAUTH_CLIENT_SECRET.trim().isEmpty();
     }
 
     private static String string(String key, String fallback) {

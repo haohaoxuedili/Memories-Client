@@ -4,7 +4,7 @@
 
 ## 配置入口
 
-开发者只需要填写 `app/src/main/assets/app-config.properties` 就能编译自己的包。仓库还提供了 `app/src/main/assets/app-config.example.properties` 作为模板。
+开发者只需要把 `app-config.example.properties` 复制为 `app/src/main/assets/app-config.properties`，填好自己的值后就能编译自己的包。真实配置文件已加入 `.gitignore`，不要提交到仓库。
 
 - Memories API、失控图床 API
 - 校园墙 OAuth Client ID、回调端口、Scope 与接口地址
@@ -12,7 +12,7 @@
 - 默认上传格式、固定 Telegram 存储、自动 CDN
 - 亮色/暗色主题默认颜色
 
-建议不要把生产 OAuth Secret 提交到公开仓库；发布前在本机填好 `app-config.properties` 再构建 APK。
+不要把生产 OAuth Secret 或服务端地址提交到公开仓库；发布前只在本机填好 `app/src/main/assets/app-config.properties` 再构建 APK。
 
 ## 主要能力
 
@@ -28,7 +28,8 @@
 
 ```bash
 cd Android
-gradle :app:assembleDebug
+cp app-config.example.properties app/src/main/assets/app-config.properties
+./gradlew :app:assembleDebug
 ```
 
 如果使用 Android Studio，直接打开 `Android/` 目录，等待 Gradle Sync 完成后运行 `app` 即可。
