@@ -213,7 +213,13 @@ h1 { max-width: 760px; margin-bottom: 12px; font-family: 'Fraunces', Georgia, se
   .status-strip > div { padding: 13px; }
   .quick-grid, .gallery-grid { grid-template-columns: 1fr; }
   .meta-card { gap: 12px; }
-  .preview-stage { grid-template-columns: 1fr; }
-  .preview-stage button { width: 100%; }
+  .preview-backdrop { padding: 10px; }
+  .preview-panel { width: 100%; max-height: calc(100dvh - 20px); }
+  .preview-stage { position: relative; grid-template-columns: minmax(0, 1fr); padding: 10px 58px; }
+  .preview-stage img { max-height: calc(100dvh - 160px); }
+  .preview-stage button { position: absolute; top: 50%; width: 42px; min-height: 52px; transform: translateY(-50%); background: rgba(255, 250, 240, 0.18); }
+  .preview-stage button:hover:not(:disabled) { transform: translateY(-50%); }
+  .preview-stage button:first-child { left: 8px; }
+  .preview-stage button:last-child { right: 8px; }
   .preview-toolbar { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
 }
