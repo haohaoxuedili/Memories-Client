@@ -50,13 +50,14 @@ public class ApiClient {
         });
     }
 
-    public void exchangeCode(String code, Callback<String> callback) {
+    public void exchangeCode(String code, String codeVerifier, Callback<String> callback) {
         new Thread(() -> {
             try {
                 String body = "grant_type=authorization_code"
                         + "&code=" + encode(code)
                         + "&redirect_uri=" + encode(AppConfig.OAUTH_REDIRECT_URI)
                         + "&client_id=" + encode(AppConfig.OAUTH_CLIENT_ID)
+                        + "&code_verifier=" + encode(codeVerifier)
                         + "&client_secret=" + encode(AppConfig.OAUTH_CLIENT_SECRET);
                 JSONObject json = postForm(AppConfig.OAUTH_TOKEN_URL, body, null);
                 String token = json.optString("access_token", "");

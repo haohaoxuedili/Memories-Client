@@ -10,7 +10,7 @@ public class UploadTask {
 
     public final Uri uri;
     public int status = WAITING;
-    public int progress;
+    public float progress;
     public String message = "等待上传";
     public String url = "";
 

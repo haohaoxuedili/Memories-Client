@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public final class AppConfig {
@@ -28,7 +30,7 @@ public final class AppConfig {
     public static String OAUTH_INTROSPECT_URL = "";
     public static String OAUTH_CLIENT_ID = "";
     public static String OAUTH_CLIENT_SECRET = "";
-    public static String OAUTH_REDIRECT_URI = "http://localhost:2580";
+    public static String OAUTH_REDIRECT_URI = "http://localhost:2580/";
     public static String OAUTH_SCOPE = "profile";
     public static int OAUTH_CALLBACK_PORT = 2580;
 
@@ -53,7 +55,7 @@ public final class AppConfig {
     public static void load(Context context) {
         try (InputStream input = context.getAssets().open(CONFIG_FILE)) {
             PROPERTIES.clear();
-            PROPERTIES.load(input);
+            PROPERTIES.load(new InputStreamReader(input, StandardCharsets.UTF_8));
         } catch (Exception ignored) {
         }
         APP_NAME = string("app.name", APP_NAME);

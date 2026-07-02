@@ -12,6 +12,7 @@ public class ThemeConfig {
     public int secondaryText;
     public float fontScale;
     public String fontFamily;
+    public String presetName;
 
     public static ThemeConfig load(SharedPreferences prefs) {
         ThemeConfig theme = new ThemeConfig();
@@ -23,6 +24,7 @@ public class ThemeConfig {
         theme.secondaryText = prefs.getInt("theme_secondary_text", theme.darkMode ? AppConfig.DARK_SECONDARY_TEXT : AppConfig.LIGHT_SECONDARY_TEXT);
         theme.fontScale = prefs.getFloat("theme_font_scale", 1.0f);
         theme.fontFamily = prefs.getString("theme_font_family", "sans");
+        theme.presetName = prefs.getString("theme_preset_name", "default");
         return theme;
     }
 
@@ -36,6 +38,7 @@ public class ThemeConfig {
                 .putInt("theme_secondary_text", secondaryText)
                 .putFloat("theme_font_scale", fontScale)
                 .putString("theme_font_family", fontFamily)
+                .putString("theme_preset_name", presetName)
                 .apply();
     }
 
@@ -46,6 +49,7 @@ public class ThemeConfig {
         background = dark ? AppConfig.DARK_BACKGROUND : AppConfig.LIGHT_BACKGROUND;
         primaryText = dark ? AppConfig.DARK_PRIMARY_TEXT : AppConfig.LIGHT_PRIMARY_TEXT;
         secondaryText = dark ? AppConfig.DARK_SECONDARY_TEXT : AppConfig.LIGHT_SECONDARY_TEXT;
+        presetName = "default";
     }
 
     public static int parseColorOrDefault(String value, int fallback) {

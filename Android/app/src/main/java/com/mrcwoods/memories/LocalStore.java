@@ -89,6 +89,14 @@ public class LocalStore {
         prefs.edit().remove(key).apply();
     }
 
+    public String downloadFolderUri() {
+        return prefs.getString("download_folder_uri", "");
+    }
+
+    public void saveDownloadFolderUri(String uri) {
+        prefs.edit().putString("download_folder_uri", uri == null ? "" : uri).apply();
+    }
+
     private JSONArray getArray(String key) {
         try {
             return new JSONArray(prefs.getString(key, "[]"));
