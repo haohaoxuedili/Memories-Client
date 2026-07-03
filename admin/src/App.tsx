@@ -595,10 +595,13 @@ export default function App() {
       {toast && <div className={`toast ${toast.kind}`}>{toast.text}</div>}
 
       <section className="hero">
-        <div>
-          <p className="eyebrow">Memories Serves / Public CDN</p>
-          <h1>Memories</h1>
-          <p className="hero-copy">上传、查询公开元数据、管理 WebDAV 备份，并在预览时快速删除不合要求的记录。</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <AppIcon width={48} height={48} style={{ flexShrink: 0 }} />
+          <div>
+            <p className="eyebrow">Memories Serves</p>
+            <h1>Memories</h1>
+            <p className="hero-copy">上传、查询公开元数据、管理 WebDAV 备份，并在预览时快速删除不合要求的记录。</p>
+          </div>
         </div>
         <div className="hero-actions">
           <button onClick={checkHealth} disabled={busy === 'health'}>{busy === 'health' ? <Loader2 className="spin" /> : <ShieldCheck />}服务检查</button>
