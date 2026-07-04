@@ -11,3 +11,12 @@ Linux/build-gcc14/
 dist/
 *.tar.gz
 build/
+Windows/build/
+Windows/build_msi/
+Windows/build_release/
+Windows/install/
+*.msi
+*.exe
+aqtinstall.log
+Tools/
+.qt/
