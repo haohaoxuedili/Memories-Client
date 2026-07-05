@@ -163,6 +163,8 @@ if(WIN32 AND BUILD_GUI)
     set(CPACK_NSIS_HELP_LINK "https://github.com/idoknow/Memories-Client/issues")
     set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/idoknow/Memories-Client")
     set(CPACK_NSIS_MODIFY_PATH ON)
+    set(CPACK_NSIS_CREATE_DESKTOP_SHORTCUT ON)
+    set(CPACK_NSIS_ENABLE_START_MENU_SHORTCUT ON)
 
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
 
