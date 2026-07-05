@@ -38,8 +38,6 @@ private:
     QPushButton* m_cancelBtn;
     QPushButton* m_clearCompletedBtn;
     QPushButton* m_clearAllBtn;
-    QPushButton* m_selectFilesBtn;
-    QPushButton* m_selectFolderBtn;
 
     // Upload options
     QComboBox* m_storageDestCombo;
