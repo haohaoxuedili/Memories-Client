@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="app.svg">app-icon.svg</file>
+    </qresource>
+    <qresource prefix="/style">
+        <file alias="main.qss">style.qss</file>
+        <file alias="dark.qss">style-dark.qss</file>
+    </qresource>
+</RCC>
