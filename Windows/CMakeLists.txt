@@ -74,7 +74,11 @@ endif()
 
 # ---- Executable ----
 if(BUILD_GUI)
-    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+    add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS})
+
+    if(WIN32)
+        target_link_options(${PROJECT_NAME} PRIVATE "-Wl,-subsystem,windows")
+    endif()
 
     target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network
@@ -165,6 +169,15 @@ if(WIN32 AND BUILD_GUI)
     set(CPACK_NSIS_MODIFY_PATH ON)
     set(CPACK_NSIS_CREATE_DESKTOP_SHORTCUT ON)
     set(CPACK_NSIS_ENABLE_START_MENU_SHORTCUT ON)
+    set(CPACK_NSIS_PACKAGE_NAME "Memories")
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+        CreateShortCut \\\"$DESKTOP\\\\Memories.lnk\\\" \\\"$INSTDIR\\\\Memories.exe\\\" \\\"\\\" \\\"$INSTDIR\\\\Memories.exe\\\" 0
+        SetOutPath \\\"$INSTDIR\\\"
+    ")
+    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+        Delete \\\"$DESKTOP\\\\Memories.lnk\\\"
+        Delete \\\"$SMPROGRAMS\\\\Memories\\\\Memories.lnk\\\"
+    ")
 
     set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install")
 
