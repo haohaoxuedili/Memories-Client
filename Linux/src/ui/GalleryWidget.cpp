@@ -3,6 +3,7 @@
 #include "network/ApiClient.h"
 #include "utils/ImageCache.h"
 #include "utils/Logger.h"
+#include "ui/MessageBox.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -34,6 +35,10 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QStyle>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QMenu>
 
 GalleryWidget::GalleryWidget(QWidget* parent)
     : QWidget(parent)
@@ -175,9 +180,11 @@ void GalleryWidget::setupUi() {
 void GalleryWidget::loadImages() {
     if (m_loading) return;
     m_loading = true;
+    m_loadingMore = false;
     m_stateStack->setCurrentWidget(m_loadingLabel);
     m_progressBar->setVisible(true);
     m_progressBar->setRange(0, 0);
+    m_emptyLabel->setText(tr("暂无图片\n请点击上传按钮添加"));
 
     m_images.clear();
     m_selections.clear();
@@ -195,6 +202,7 @@ void GalleryWidget::loadImages() {
 
 void GalleryWidget::onImagesFetched(const QJsonArray& data, qint64 nextAfterId) {
     m_loading = false;
+    m_loadingMore = false;
     m_progressBar->setVisible(false);
     m_hasMore = (nextAfterId > 0);
     m_nextAfterId = nextAfterId;
@@ -225,7 +233,19 @@ void GalleryWidget::onImagesFetched(const QJsonArray& data, qint64 nextAfterId) 
 
 void GalleryWidget::onFetchError(const QString& error) {
     m_loading = false;
+    const bool wasLoadingMore = m_loadingMore;
+    m_loadingMore = false;
     m_progressBar->setVisible(false);
+    m_loadMoreBtn->setText(tr("加载更多..."));
+    m_loadMoreBtn->setEnabled(true);
+    m_loadMoreBtn->setVisible(m_hasMore);
+
+    if (wasLoadingMore && !m_images.isEmpty()) {
+        m_stateStack->setCurrentWidget(m_scrollArea);
+        MessageBox::warning(this, tr("加载失败"), tr("加载更多失败: %1").arg(error));
+        return;
+    }
+
     m_stateStack->setCurrentWidget(m_emptyLabel);
     m_emptyLabel->setText(tr("加载失败: %1\n请检查网络连接后重试").arg(error));
 }
@@ -285,6 +305,26 @@ void GalleryWidget::addThumbnail(const ImageInfo& info) {
             m_selectAllBtn->setText(selectedCount() == m_images.size() ? tr("取消全选") : tr("全选"));
         } else {
             onThumbnailClicked(url);
+        }
+    });
+
+    thumbBtn->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(thumbBtn, &QToolButton::customContextMenuRequested, this, [this, url = info.url, thumbBtn](const QPoint& pos) {
+        QMenu menu(this);
+        auto* openAction = menu.addAction(QIcon(":/icons/ic_open_web.svg"), tr("打开图片"));
+        auto* copyAction = menu.addAction(QIcon(":/icons/ic_copy_link.svg"), tr("复制链接"));
+        auto* selectAction = menu.addAction(QIcon(":/icons/ic_gallery.svg"),
+            thumbBtn->property("selected").toBool() ? tr("取消选择") : tr("选择图片"));
+        QAction* chosen = menu.exec(thumbBtn->mapToGlobal(pos));
+        if (chosen == openAction) {
+            onThumbnailClicked(url);
+        } else if (chosen == copyAction) {
+            QApplication::clipboard()->setText(url);
+        } else if (chosen == selectAction) {
+            if (!m_selectionMode) {
+                m_selectModeBtn->click();
+            }
+            thumbBtn->click();
         }
     });
 
@@ -355,19 +395,56 @@ QStringList GalleryWidget::selectedUrls() const {
 void GalleryWidget::onBatchDownload() {
     auto urls = selectedUrls();
     if (urls.isEmpty()) {
-        QMessageBox::information(this, tr("提示"), tr("未选中任何图片。"));
+        MessageBox::information(this, tr("提示"), tr("未选中任何图片。"));
         return;
     }
 
     QString dir = QFileDialog::getExistingDirectory(this, tr("选择下载目录"));
     if (dir.isEmpty()) return;
 
-    // Async download via network manager
+    int total = urls.size();
+    auto* finishedCount = new int(0);
+    auto* failedCount = new int(0);
     for (const auto& url : urls) {
-        QDesktopServices::openUrl(QUrl(url)); // Simplified - open in browser
+        auto* reply = m_networkManager->get(QNetworkRequest(QUrl(url)));
+        connect(reply, &QNetworkReply::finished, this, [this, reply, url, dir, total, finishedCount, failedCount]() {
+            reply->deleteLater();
+            (*finishedCount)++;
+
+            if (reply->error() == QNetworkReply::NoError) {
+                QString fileName = QFileInfo(QUrl(url).path()).fileName();
+                if (fileName.isEmpty()) fileName = QString("memories_%1.jpg").arg(*finishedCount, 3, 10, QChar('0'));
+                QString filePath = QDir(dir).filePath(fileName);
+                int suffix = 1;
+                while (QFileInfo::exists(filePath)) {
+                    QFileInfo info(fileName);
+                    filePath = QDir(dir).filePath(QString("%1_%2.%3")
+                        .arg(info.completeBaseName())
+                        .arg(suffix++)
+                        .arg(info.suffix().isEmpty() ? QStringLiteral("jpg") : info.suffix()));
+                }
+
+                QFile file(filePath);
+                if (file.open(QIODevice::WriteOnly)) {
+                    file.write(reply->readAll());
+                } else {
+                    (*failedCount)++;
+                }
+            } else {
+                (*failedCount)++;
+            }
+
+            if (*finishedCount >= total) {
+                MessageBox::information(this, tr("下载"),
+                    tr("已保存 %1 张图片到：\n%2%3")
+                        .arg(total - *failedCount)
+                        .arg(dir)
+                        .arg(*failedCount > 0 ? tr("\n失败 %1 张").arg(*failedCount) : QString()));
+                delete finishedCount;
+                delete failedCount;
+            }
+        });
     }
-    QMessageBox::information(this, tr("下载"),
-        tr("正在打开 %1 张图片...").arg(urls.size()));
 }
 
 void GalleryWidget::onBatchShare() {
@@ -376,7 +453,7 @@ void GalleryWidget::onBatchShare() {
 
     QString text = urls.join("\n");
     QApplication::clipboard()->setText(text);
-    QMessageBox::information(this, tr("分享"),
+    MessageBox::information(this, tr("分享"),
         tr("已复制 %1 个链接到剪贴板。").arg(urls.size()));
 }
 
@@ -389,7 +466,7 @@ void GalleryWidget::onBatchPrint() {
     if (printDlg.exec() != QDialog::Accepted) return;
 
     // Simplified batch print
-    QMessageBox::information(this, tr("打印"),
+    MessageBox::information(this, tr("打印"),
         tr("正在打印 %1 张图片...").arg(urls.size()));
 }
 
@@ -398,13 +475,14 @@ void GalleryWidget::onBatchCopyUrl() {
     if (urls.isEmpty()) return;
 
     QApplication::clipboard()->setText(urls.join("\n"));
-    QMessageBox::information(this, tr("复制"),
+    MessageBox::information(this, tr("复制"),
         tr("已复制 %1 个链接到剪贴板。").arg(urls.size()));
 }
 
 void GalleryWidget::loadMore() {
     if (m_loading || !m_hasMore) return;
     m_loading = true;
+    m_loadingMore = true;
     m_progressBar->setVisible(true);
     m_progressBar->setRange(0, 0);
     m_loadMoreBtn->setText(tr("加载中..."));

@@ -1,6 +1,34 @@
 <RCC>
     <qresource prefix="/icons">
         <file alias="app.svg">app-icon.svg</file>
+        <file alias="ic_back.svg">icons/ic_back.svg</file>
+        <file alias="ic_copy_link.svg">icons/ic_copy_link.svg</file>
+        <file alias="ic_download.svg">icons/ic_download.svg</file>
+        <file alias="ic_flip_h.svg">icons/ic_flip_h.svg</file>
+        <file alias="ic_flip_v.svg">icons/ic_flip_v.svg</file>
+        <file alias="ic_gallery.svg">icons/ic_gallery.svg</file>
+        <file alias="ic_info.svg">icons/ic_info.svg</file>
+        <file alias="ic_contact.svg">icons/ic_contact.svg</file>
+        <file alias="ic_logout.svg">icons/ic_logout.svg</file>
+        <file alias="ic_open_web.svg">icons/ic_open_web.svg</file>
+        <file alias="ic_opensource.svg">icons/ic_opensource.svg</file>
+        <file alias="ic_policy.svg">icons/ic_policy.svg</file>
+        <file alias="ic_security.svg">icons/ic_security.svg</file>
+        <file alias="ic_storage.svg">icons/ic_storage.svg</file>
+        <file alias="ic_terms.svg">icons/ic_terms.svg</file>
+        <file alias="ic_theme.svg">icons/ic_theme.svg</file>
+        <file alias="ic_next.svg">icons/ic_next.svg</file>
+        <file alias="ic_prev.svg">icons/ic_prev.svg</file>
+        <file alias="ic_print.svg">icons/ic_print.svg</file>
+        <file alias="ic_profile.svg">icons/ic_profile.svg</file>
+        <file alias="ic_reset.svg">icons/ic_reset.svg</file>
+        <file alias="ic_rotate_ccw.svg">icons/ic_rotate_ccw.svg</file>
+        <file alias="ic_rotate_cw.svg">icons/ic_rotate_cw.svg</file>
+        <file alias="ic_share.svg">icons/ic_share.svg</file>
+        <file alias="ic_upload.svg">icons/ic_upload.svg</file>
+        <file alias="ic_wallpaper.svg">icons/ic_wallpaper.svg</file>
+        <file alias="ic_zoom_in.svg">icons/ic_zoom_in.svg</file>
+        <file alias="ic_zoom_out.svg">icons/ic_zoom_out.svg</file>
     </qresource>
     <qresource prefix="/style">
         <file alias="main.qss">style.qss</file>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(Memories VERSION 1.0.0 LANGUAGES CXX)
+project(Memories VERSION 1.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -57,6 +57,7 @@ if(BUILD_GUI)
         src/ui/ImageInfoDialog.cpp
         src/ui/FlowLayout.cpp
         src/ui/AppleTitleBar.cpp
+        src/ui/MessageBox.cpp
     )
     list(APPEND SOURCES
         resources/resources.qrc
@@ -69,6 +70,7 @@ if(BUILD_GUI)
         src/ui/SettingsDialog.h
         src/ui/LoginDialog.h
         src/ui/ImageInfoDialog.h
+        src/ui/MessageBox.h
     )
 endif()
 

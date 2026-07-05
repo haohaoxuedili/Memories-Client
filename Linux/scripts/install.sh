@@ -5,7 +5,7 @@
 set -e
 
 APP_NAME="MemoriesClient"
-VERSION="1.0.0"
+VERSION="1.1.0"
 INSTALL_DIR="/opt/MemoriesClient"
 BIN_DIR="/usr/local/bin"
 DESKTOP_DIR="/usr/share/applications"

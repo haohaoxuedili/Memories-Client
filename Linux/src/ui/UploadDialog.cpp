@@ -4,6 +4,7 @@
 #include "network/ImageUploader.h"
 #include "models/UploadQueue.h"
 #include "ui/AppleTitleBar.h"
+#include "ui/MessageBox.h"
 #include "utils/Logger.h"
 
 #include <QVBoxLayout>
@@ -15,14 +16,17 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QComboBox>
+#include <QAbstractItemView>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMimeDatabase>
 #include <QFileInfo>
 #include <QSpinBox>
+#include <QScrollBar>
 
-UploadDialog::UploadDialog(QWidget* parent)
+UploadDialog::UploadDialog(QWidget* parent, bool embedded)
     : QDialog(parent)
+    , m_embedded(embedded)
     , m_listWidget(new QListWidget(this))
     , m_overallProgress(new QProgressBar(this))
     , m_statusLabel(new QLabel(tr("就绪"), this))
@@ -31,8 +35,6 @@ UploadDialog::UploadDialog(QWidget* parent)
     , m_cancelBtn(new QPushButton(tr("取消"), this))
     , m_clearCompletedBtn(new QPushButton(tr("清除已完成"), this))
     , m_clearAllBtn(new QPushButton(tr("清空全部"), this))
-    , m_selectFilesBtn(new QPushButton(tr("添加文件..."), this))
-    , m_selectFolderBtn(new QPushButton(tr("添加文件夹..."), this))
     , m_storageDestCombo(new QComboBox(this))
     , m_outputFormatCombo(new QComboBox(this))
     , m_cdnDomainCombo(new QComboBox(this))
@@ -59,43 +61,47 @@ UploadDialog::UploadDialog(QWidget* parent)
 }
 
 void UploadDialog::setupUi() {
-    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-    resize(640, 560);
+    if (m_embedded) {
+        setWindowFlags(Qt::Widget);
+    } else {
+        setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+        resize(640, 560);
+    }
     setMinimumSize(520, 440);
 
     auto* outerLayout = new QVBoxLayout(this);
     outerLayout->setContentsMargins(0, 0, 0, 0);
     outerLayout->setSpacing(0);
 
-    // Apple title bar - no title text
-    auto* titleBar = new AppleTitleBar(this, "", false);
-    outerLayout->addWidget(titleBar);
+    if (!m_embedded) {
+        auto* titleBar = new AppleTitleBar(this, "", false);
+        outerLayout->addWidget(titleBar);
+    }
 
     auto* mainLayout = new QVBoxLayout();
     mainLayout->setSpacing(16);
-    mainLayout->setContentsMargins(24, 16, 24, 24);
+    mainLayout->setContentsMargins(24, m_embedded ? 24 : 16, 24, 24);
     outerLayout->addLayout(mainLayout);
-
-    // File selection buttons at top
-    auto* headerLayout = new QHBoxLayout();
-    headerLayout->addStretch();
-    auto* addFileBtn = new QPushButton(tr("＋ 添加文件"));
-    addFileBtn->setProperty("primaryBtn", true);
-    auto* addFolderBtn = new QPushButton(tr("📁 添加文件夹"));
-    addFolderBtn->setProperty("flat", true);
-    headerLayout->addWidget(addFileBtn);
-    headerLayout->addWidget(addFolderBtn);
-    mainLayout->addLayout(headerLayout);
 
     // Upload options in a compact row
     auto* optionsGroup = new QGroupBox(tr("上传选项"));
     auto* optionsLayout = new QHBoxLayout(optionsGroup);
     optionsLayout->setSpacing(16);
 
+    auto configureUploadCombo = [](QComboBox* combo) {
+        combo->setProperty("uploadOptionCombo", true);
+        combo->view()->setProperty("uploadOptionPopup", true);
+        combo->view()->setAttribute(Qt::WA_TranslucentBackground);
+        combo->view()->viewport()->setProperty("uploadOptionPopupViewport", true);
+        combo->view()->viewport()->setAttribute(Qt::WA_TranslucentBackground);
+        combo->view()->window()->setAttribute(Qt::WA_TranslucentBackground);
+    };
+
     auto* opt1 = new QWidget();
     auto* opt1Layout = new QVBoxLayout(opt1);
     opt1Layout->setContentsMargins(0,0,0,0);
     opt1Layout->addWidget(new QLabel(tr("存储位置")));
+    configureUploadCombo(m_storageDestCombo);
     m_storageDestCombo->addItems({"auto", "local", "telegram", "r2"});
     m_storageDestCombo->setCurrentText(Application::instance()->settings()->defaultStorageDest());
     opt1Layout->addWidget(m_storageDestCombo);
@@ -105,6 +111,7 @@ void UploadDialog::setupUi() {
     auto* opt2Layout = new QVBoxLayout(opt2);
     opt2Layout->setContentsMargins(0,0,0,0);
     opt2Layout->addWidget(new QLabel(tr("输出格式")));
+    configureUploadCombo(m_outputFormatCombo);
     m_outputFormatCombo->addItems({"auto", "jpg", "png", "webp", "gif", "webp_animated"});
     m_outputFormatCombo->setCurrentText(Application::instance()->settings()->defaultOutputFormat());
     opt2Layout->addWidget(m_outputFormatCombo);
@@ -114,6 +121,7 @@ void UploadDialog::setupUi() {
     auto* opt3Layout = new QVBoxLayout(opt3);
     opt3Layout->setContentsMargins(0,0,0,0);
     opt3Layout->addWidget(new QLabel(tr("CDN 域名")));
+    configureUploadCombo(m_cdnDomainCombo);
     m_cdnDomainCombo->addItems({
         "img.scdn.io", "cloudflareimg.cdn.sn", "edgeoneimg.cdn.sn",
         "esaimg.cdn1.vip", "cloudflarecnimg.scdn.io", "anycastimg.scdn.io", "edgeoneimg.cdn1.vip"
@@ -127,13 +135,22 @@ void UploadDialog::setupUi() {
     // Queue label
     auto* queueHeader = new QHBoxLayout();
     auto* queueLabel = new QLabel(tr("上传队列"));
-    queueLabel->setStyleSheet("font-weight: 700; font-size: 14px; color: #0f172a;");
+    queueLabel->setStyleSheet("font-weight: 800; font-size: 14px; color: rgba(16,35,38,0.88);");
     queueHeader->addWidget(queueLabel);
     queueHeader->addStretch();
-    m_countLabel->setStyleSheet("color: #64748b; font-size: 12px;");
+    m_countLabel->setStyleSheet("color: rgba(63,89,97,0.78); font-size: 12px; font-weight: 600;");
     queueHeader->addWidget(m_countLabel);
+    auto* addFileBtn = new QPushButton(tr("添加文件"));
+    addFileBtn->setProperty("primaryBtn", true);
+    auto* addFolderBtn = new QPushButton(tr("添加文件夹"));
+    addFolderBtn->setProperty("flat", true);
+    queueHeader->addWidget(addFileBtn);
+    queueHeader->addWidget(addFolderBtn);
     mainLayout->addLayout(queueHeader);
 
+    m_listWidget->setProperty("uploadQueueList", true);
+    m_listWidget->viewport()->setProperty("uploadQueueViewport", true);
+    m_listWidget->verticalScrollBar()->setProperty("uploadQueueScrollBar", true);
     mainLayout->addWidget(m_listWidget, 1);
 
     // Progress
@@ -143,7 +160,7 @@ void UploadDialog::setupUi() {
 
     // Status + buttons
     auto* bottomLayout = new QHBoxLayout();
-    m_statusLabel->setStyleSheet("color: #64748b; font-size: 12px;");
+    m_statusLabel->setStyleSheet("color: rgba(63,89,97,0.78); font-size: 12px; font-weight: 600;");
     bottomLayout->addWidget(m_statusLabel);
     bottomLayout->addStretch();
     m_clearCompletedBtn->setProperty("flat", true);
@@ -230,13 +247,13 @@ void UploadDialog::onSelectFolder() {
 void UploadDialog::onStartUpload() {
     auto* queue = Application::instance()->imageUploader()->queue();
     if (queue->pendingCount() == 0) {
-        QMessageBox::information(this, tr("提示"), tr("请先添加要上传的文件。"));
+        MessageBox::information(this, tr("提示"), tr("请先添加要上传的文件。"));
         return;
     }
 
     // Check login
     if (!Application::instance()->settings()->isLoggedIn()) {
-        QMessageBox::warning(this, tr("未登录"),
+        MessageBox::warning(this, tr("未登录"),
             tr("请先通过「账号 → 登录」使用校园墙 OAuth 登录后再上传。"));
         return;
     }
@@ -292,7 +309,7 @@ void UploadDialog::onUploadCompleted(const UploadItem& item) {
 
 void UploadDialog::onUploadFailed(const QString& path, const QString& error) {
     m_statusLabel->setText(tr("失败: ") + QFileInfo(path).fileName());
-    QMessageBox::warning(this, tr("上传失败"),
+    MessageBox::warning(this, tr("上传失败"),
         QFileInfo(path).fileName() + ": " + error);
 }
 
@@ -303,7 +320,7 @@ void UploadDialog::onAllCompleted() {
     m_statusLabel->setText(tr("全部上传完成"));
 
     // Show notification
-    QMessageBox::information(this, tr("上传完成"),
+    MessageBox::information(this, tr("上传完成"),
         tr("所有文件已成功上传。"));
 }
 

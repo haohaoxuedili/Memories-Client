@@ -15,6 +15,7 @@
 #include <QClipboard>
 #include <QApplication>
 #include <QScrollArea>
+#include <QStyle>
 
 // Helper: format file size
 static QString formatFileSize(qint64 bytes) {
@@ -33,19 +34,20 @@ ImageInfoDialog::ImageInfoDialog(QWidget* parent)
     , m_dimensionsLabel(new QLabel(this))
     , m_uploadDateLabel(new QLabel(this))
     , m_locationLabel(new QLabel(this))
-    , m_urlLabel(new QLabel(this))
+    , m_urlEdit(new QTextEdit(this))
     , m_descEdit(new QTextEdit(this))
     , m_loadingLabel(new QLabel(tr("加载中..."), this))
     , m_manager(new QNetworkAccessManager(this))
 {
+    setObjectName("imageInfoDialog");
     setupUi();
 }
 
 void ImageInfoDialog::setupUi() {
     setWindowTitle(tr("图片信息"));
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-    resize(500, 550);
-    setMinimumSize(400, 400);
+    resize(580, 620);
+    setMinimumSize(500, 460);
 
     auto* outerLayout = new QVBoxLayout(this);
     outerLayout->setContentsMargins(0,0,0,0);
@@ -55,36 +57,60 @@ void ImageInfoDialog::setupUi() {
     outerLayout->addWidget(titleBar);
 
     auto* mainLayout = new QVBoxLayout();
-    mainLayout->setContentsMargins(24, 16, 24, 24);
+    mainLayout->setContentsMargins(24, 18, 24, 24);
+    mainLayout->setSpacing(16);
     outerLayout->addLayout(mainLayout);
 
     m_loadingLabel->setAlignment(Qt::AlignCenter);
+    m_loadingLabel->setProperty("infoLoading", true);
     mainLayout->addWidget(m_loadingLabel);
 
     // Info group
     auto* infoGroup = new QGroupBox(tr("图片详情"));
+    infoGroup->setProperty("infoSection", true);
     auto* infoLayout = new QFormLayout(infoGroup);
+    infoLayout->setContentsMargins(16, 24, 16, 16);
+    infoLayout->setHorizontalSpacing(14);
+    infoLayout->setVerticalSpacing(12);
+    infoLayout->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
 
-    infoLayout->addRow(tr("文件名:"), m_nameLabel);
-    infoLayout->addRow(tr("存储位置:"), m_storageLabel);
-    infoLayout->addRow(tr("标签:"), m_tagsLabel);
+    const QList<QLabel*> valueLabels = {
+        m_nameLabel, m_storageLabel, m_tagsLabel, m_sizeLabel,
+        m_uploadDateLabel, m_locationLabel
+    };
+    for (auto* label : valueLabels) {
+        label->setProperty("infoValue", true);
+        label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        label->setWordWrap(true);
+    }
+
+    infoLayout->addRow(tr("文件名"), m_nameLabel);
+    infoLayout->addRow(tr("存储位置"), m_storageLabel);
+    infoLayout->addRow(tr("标签"), m_tagsLabel);
     m_tagsLabel->setWordWrap(true);
-    infoLayout->addRow(tr("大小:"), m_sizeLabel);
-    infoLayout->addRow(tr("上传日期:"), m_uploadDateLabel);
-    infoLayout->addRow(tr("归属地:"), m_locationLabel);
-    infoLayout->addRow(tr("链接:"), m_urlLabel);
-    m_urlLabel->setWordWrap(true);
-    m_urlLabel->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-    m_urlLabel->setCursor(Qt::PointingHandCursor);
-    m_urlLabel->setOpenExternalLinks(true);
+    infoLayout->addRow(tr("大小"), m_sizeLabel);
+    infoLayout->addRow(tr("上传日期"), m_uploadDateLabel);
+    infoLayout->addRow(tr("归属地"), m_locationLabel);
+    infoLayout->addRow(tr("链接"), m_urlEdit);
+    m_urlEdit->setReadOnly(true);
+    m_urlEdit->setAcceptRichText(false);
+    m_urlEdit->setLineWrapMode(QTextEdit::WidgetWidth);
+    m_urlEdit->setMinimumHeight(74);
+    m_urlEdit->setMaximumHeight(104);
+    m_urlEdit->setProperty("infoUrlBox", true);
 
     mainLayout->addWidget(infoGroup);
 
     // Description group
     auto* descGroup = new QGroupBox(tr("描述"));
+    descGroup->setProperty("infoSection", true);
     auto* descLayout = new QVBoxLayout(descGroup);
+    descLayout->setContentsMargins(16, 24, 16, 16);
     m_descEdit->setReadOnly(true);
-    m_descEdit->setMaximumHeight(120);
+    m_descEdit->setAcceptRichText(false);
+    m_descEdit->setMinimumHeight(96);
+    m_descEdit->setMaximumHeight(140);
+    m_descEdit->setProperty("infoDescBox", true);
     descLayout->addWidget(m_descEdit);
     mainLayout->addWidget(descGroup);
 
@@ -92,7 +118,7 @@ void ImageInfoDialog::setupUi() {
     auto* btnLayout = new QHBoxLayout();
     auto* copyBtn = new QPushButton(tr("复制链接"), this);
     connect(copyBtn, &QPushButton::clicked, this, [this]() {
-        QApplication::clipboard()->setText(m_urlLabel->text());
+        QApplication::clipboard()->setText(m_urlEdit->toPlainText());
     });
     btnLayout->addWidget(copyBtn);
 
@@ -105,7 +131,7 @@ void ImageInfoDialog::setupUi() {
         info += "大小: " + m_sizeLabel->text() + "\n";
         info += "上传日期: " + m_uploadDateLabel->text() + "\n";
         info += "归属地: " + m_locationLabel->text() + "\n";
-        info += "链接: " + m_urlLabel->text() + "\n";
+        info += "链接: " + m_urlEdit->toPlainText() + "\n";
         info += "描述: " + m_descEdit->toPlainText() + "\n";
         QApplication::clipboard()->setText(info);
     });
@@ -117,6 +143,8 @@ void ImageInfoDialog::setupUi() {
 void ImageInfoDialog::queryImage(const QString& imageUrl) {
     m_loadingLabel->setVisible(true);
     m_loadingLabel->setText(tr("正在查询图片信息..."));
+    m_loadingLabel->style()->unpolish(m_loadingLabel);
+    m_loadingLabel->style()->polish(m_loadingLabel);
 
     // Extract filename from URL for querying img.scdn.io API
     QString filename = imageUrl.section('/', -1);
@@ -176,7 +204,7 @@ void ImageInfoDialog::displayInfo(const ImageInfo& info) {
 
     m_uploadDateLabel->setText(info.uploadDate);
     m_locationLabel->setText(info.location.isEmpty() ? tr("未知") : info.location);
-    m_urlLabel->setText(info.imageUrl.isEmpty() ? info.url : info.imageUrl);
+    m_urlEdit->setPlainText(info.imageUrl.isEmpty() ? info.url : info.imageUrl);
     m_descEdit->setPlainText(info.contentDescription.isEmpty()
         ? tr("暂无描述信息。") : info.contentDescription);
 }

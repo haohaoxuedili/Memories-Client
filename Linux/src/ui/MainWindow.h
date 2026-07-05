@@ -14,6 +14,8 @@ class ImageViewer;
 class UploadDialog;
 class SettingsDialog;
 class LoginDialog;
+class QFrame;
+class QToolButton;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -42,6 +44,9 @@ private:
     void setupUi();
     void setupMenuBar(QMenuBar* menuBar);
     void setupToolBar(QToolBar* toolbar);
+    QFrame* setupSideNavigation();
+    QToolButton* createNavButton(const QString& text, const QIcon& icon);
+    void setActiveNavigation(QToolButton* activeButton);
     void setupStatusBar();
     void setupSystemTray();
     void applyTheme();
@@ -65,6 +70,9 @@ private:
     QLabel* m_statusLabel;
     QLabel* m_healthLabel;
     QLabel* m_avatarLabel;
+    QToolButton* m_galleryNavButton = nullptr;
+    QToolButton* m_uploadNavButton = nullptr;
+    QToolButton* m_profileNavButton = nullptr;
     QSystemTrayIcon* m_trayIcon;
 
     // Drag state

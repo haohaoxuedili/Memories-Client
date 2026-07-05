@@ -23,7 +23,7 @@ private:
     QLabel* m_dimensionsLabel;
     QLabel* m_uploadDateLabel;
     QLabel* m_locationLabel;
-    QLabel* m_urlLabel;
+    QTextEdit* m_urlEdit;
     QTextEdit* m_descEdit;
     QLabel* m_loadingLabel;
 
