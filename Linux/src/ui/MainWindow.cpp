@@ -4,6 +4,7 @@
 #include "ui/UploadDialog.h"
 #include "ui/SettingsDialog.h"
 #include "ui/LoginDialog.h"
+#include "ui/MessageBox.h"
 #include "app/Application.h"
 #include "app/Settings.h"
 #include "network/HealthChecker.h"
@@ -20,13 +21,14 @@
 #include <QMouseEvent>
 #include <QMessageBox>
 #include <QApplication>
-#include <QStyle>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
 #include <QFile>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QFrame>
+#include <QToolButton>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -70,27 +72,29 @@ void MainWindow::setupUi() {
     setupTitleBar();
     mainVLayout->addWidget(m_titleBar);
 
-    // Menu bar as regular widget (not native)
-    auto* menuBar = new QMenuBar(this);
-    mainVLayout->addWidget(menuBar);
-    setupMenuBar(menuBar);
+    auto* shell = new QWidget(this);
+    shell->setObjectName("androidShell");
+    auto* shellLayout = new QHBoxLayout(shell);
+    shellLayout->setContentsMargins(18, 16, 18, 16);
+    shellLayout->setSpacing(16);
+    shellLayout->addWidget(setupSideNavigation());
 
-    // Toolbar
-    auto* toolbar = new QToolBar(tr("主工具栏"), this);
-    toolbar->setMovable(false);
-    toolbar->setIconSize(QSize(24, 24));
-    mainVLayout->addWidget(toolbar);
-    setupToolBar(toolbar);
-
-    // Content
     m_stack->addWidget(m_gallery = new GalleryWidget(this));
     m_stack->addWidget(m_viewer = new ImageViewer(this));
+    m_stack->addWidget(m_uploadDlg = new UploadDialog(this, true));
+    m_stack->addWidget(m_loginDlg = new LoginDialog(this, true));
     m_stack->setCurrentWidget(m_gallery);
-    mainVLayout->addWidget(m_stack, 1);
+    m_stack->setObjectName("contentStack");
+    shellLayout->addWidget(m_stack, 1);
+    mainVLayout->addWidget(shell, 1);
 
     // Navigation
     connect(m_gallery, &GalleryWidget::imageSelected, this, &MainWindow::showImageViewer);
     connect(m_viewer, &ImageViewer::backToGallery, this, &MainWindow::showGallery);
+    connect(m_loginDlg, &LoginDialog::loginSuccess, this, [this]() {
+        updateUserDisplay();
+    });
+    setActiveNavigation(m_galleryNavButton);
 
     setupStatusBar();
     setupSystemTray();
@@ -193,8 +197,8 @@ void MainWindow::setupMenuBar(QMenuBar* menuBar) {
     auto* helpMenu = menuBar->addMenu(tr("帮助(&H)"));
     auto* aboutAction = helpMenu->addAction(tr("关于(&A)"));
     connect(aboutAction, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, tr("关于 Memories"),
-            tr("Memories v1.0.0\n跨平台图片管理与分享客户端。"));
+        MessageBox::about(this, tr("关于 Memories"),
+            tr("Memories v1.1.0\n跨平台图片管理与分享客户端。"));
     });
 }
 
@@ -202,12 +206,10 @@ void MainWindow::setupToolBar(QToolBar* toolbar) {
     toolbar->setMovable(false);
     toolbar->setIconSize(QSize(24, 24));
 
-    auto* galleryAction = toolbar->addAction(
-        style()->standardIcon(QStyle::SP_DirIcon), tr("广场"));
+    auto* galleryAction = toolbar->addAction(QIcon(":/icons/ic_gallery.svg"), tr("广场"));
     connect(galleryAction, &QAction::triggered, this, &MainWindow::showGallery);
 
-    auto* uploadAction = toolbar->addAction(
-        style()->standardIcon(QStyle::SP_FileDialogNewFolder), tr("上传"));
+    auto* uploadAction = toolbar->addAction(QIcon(":/icons/ic_upload.svg"), tr("上传"));
     connect(uploadAction, &QAction::triggered, this, &MainWindow::showUploadDialog);
 
     toolbar->addSeparator();
@@ -216,13 +218,12 @@ void MainWindow::setupToolBar(QToolBar* toolbar) {
     m_avatarLabel->setFixedSize(28, 28);
     m_avatarLabel->setAlignment(Qt::AlignCenter);
     m_avatarLabel->setStyleSheet(
-        "QLabel { background: #1D6E5A; color: white; border-radius: 14px; "
-        "font-weight: 700; font-size: 12px; min-width: 28px; min-height: 28px; }");
+        "QLabel { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 #F8FAFC,stop:0.48 #BFE7E2,stop:1 #BFD9FF); color: #123235; border-radius: 14px; "
+        "border: 1px solid rgba(255,255,255,0.82); font-weight: 800; font-size: 12px; min-width: 28px; min-height: 28px; }");
     m_avatarLabel->setVisible(false);
     toolbar->addWidget(m_avatarLabel);
 
-    auto* loginAction = toolbar->addAction(
-        style()->standardIcon(QStyle::SP_ComputerIcon), tr("登录"));
+    auto* loginAction = toolbar->addAction(QIcon(":/icons/ic_profile.svg"), tr("登录"));
     loginAction->setObjectName("toolbarLoginBtn");
     connect(loginAction, &QAction::triggered, this, [this]() {
         if (Application::instance()->settings()->isLoggedIn()) {
@@ -231,6 +232,62 @@ void MainWindow::setupToolBar(QToolBar* toolbar) {
             showLoginDialog();
         }
     });
+}
+
+QFrame* MainWindow::setupSideNavigation() {
+    auto* sideNav = new QFrame(this);
+    sideNav->setObjectName("sideNavigation");
+    sideNav->setFixedWidth(112);
+
+    auto* navLayout = new QVBoxLayout(sideNav);
+    navLayout->setContentsMargins(12, 14, 12, 14);
+    navLayout->setSpacing(10);
+
+    m_galleryNavButton = createNavButton(tr("广场"), QIcon(":/icons/ic_gallery.svg"));
+    connect(m_galleryNavButton, &QToolButton::clicked, this, &MainWindow::showGallery);
+    navLayout->addWidget(m_galleryNavButton);
+
+    m_uploadNavButton = createNavButton(tr("上传"), QIcon(":/icons/ic_upload.svg"));
+    connect(m_uploadNavButton, &QToolButton::clicked, this, [this]() {
+        setActiveNavigation(m_uploadNavButton);
+        showUploadDialog();
+    });
+    navLayout->addWidget(m_uploadNavButton);
+
+    navLayout->addStretch();
+
+    m_profileNavButton = createNavButton(tr("个人"), QIcon(":/icons/ic_profile.svg"));
+    connect(m_profileNavButton, &QToolButton::clicked, this, [this]() {
+        setActiveNavigation(m_profileNavButton);
+        showLoginDialog();
+    });
+    navLayout->addWidget(m_profileNavButton);
+
+    return sideNav;
+}
+
+QToolButton* MainWindow::createNavButton(const QString& text, const QIcon& icon) {
+    auto* button = new QToolButton(this);
+    button->setProperty("sideNavButton", true);
+    button->setText(text);
+    button->setIcon(icon);
+    button->setIconSize(QSize(28, 28));
+    button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    button->setCheckable(true);
+    button->setAutoRaise(false);
+    button->setCursor(Qt::PointingHandCursor);
+    button->setFixedSize(88, 72);
+    return button;
+}
+
+void MainWindow::setActiveNavigation(QToolButton* activeButton) {
+    const QList<QToolButton*> buttons = {m_galleryNavButton, m_uploadNavButton, m_profileNavButton};
+    for (auto* button : buttons) {
+        if (!button) continue;
+        button->setChecked(button == activeButton);
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
 }
 
 void MainWindow::setupStatusBar() {
@@ -306,7 +363,10 @@ void MainWindow::onHealthCheckResult(bool ok) {
     }
 }
 
-void MainWindow::showGallery() { m_stack->setCurrentWidget(m_gallery); }
+void MainWindow::showGallery() {
+    m_stack->setCurrentWidget(m_gallery);
+    setActiveNavigation(m_galleryNavButton);
+}
 
 void MainWindow::showImageViewer(const QString& imageUrl) {
     // Build image list from gallery
@@ -321,14 +381,12 @@ void MainWindow::showImageViewer(const QString& imageUrl) {
     m_viewer->setImageList(urls, currentIdx);
     m_viewer->loadImage(imageUrl);
     m_stack->setCurrentWidget(m_viewer);
+    setActiveNavigation(m_galleryNavButton);
 }
 
 void MainWindow::showUploadDialog() {
-    if (!m_uploadDlg) {
-        m_uploadDlg = new UploadDialog(this);
-    }
-    m_uploadDlg->show();
-    m_uploadDlg->raise();
+    m_stack->setCurrentWidget(m_uploadDlg);
+    setActiveNavigation(m_uploadNavButton);
 }
 
 void MainWindow::showSettingsDialog() {
@@ -340,14 +398,8 @@ void MainWindow::showSettingsDialog() {
 }
 
 void MainWindow::showLoginDialog() {
-    if (!m_loginDlg) {
-        m_loginDlg = new LoginDialog(this);
-        connect(m_loginDlg, &LoginDialog::loginSuccess, this, [this]() {
-            updateUserDisplay();
-        });
-    }
-    m_loginDlg->show();
-    m_loginDlg->raise();
+    m_stack->setCurrentWidget(m_loginDlg);
+    setActiveNavigation(m_profileNavButton);
 }
 
 void MainWindow::onLoginSuccess() {
@@ -364,15 +416,15 @@ void MainWindow::updateUserDisplay() {
         m_avatarLabel->setText(username.isEmpty() ? "?" : username.left(1));
         m_avatarLabel->setVisible(true);
 
-        m_accountLoginAction->setText(username.isEmpty() ? tr("我的") : username);
-        m_accountLogoutAction->setVisible(true);
+        if (m_accountLoginAction) m_accountLoginAction->setText(username.isEmpty() ? tr("我的") : username);
+        if (m_accountLogoutAction) m_accountLogoutAction->setVisible(true);
     } else {
         m_statusLabel->setText(tr("就绪 - 未登录"));
         setWindowTitle("Memories");
         m_avatarLabel->setVisible(false);
 
-        m_accountLoginAction->setText(tr("登录(&L)..."));
-        m_accountLogoutAction->setVisible(false);
+        if (m_accountLoginAction) m_accountLoginAction->setText(tr("登录(&L)..."));
+        if (m_accountLogoutAction) m_accountLogoutAction->setVisible(false);
     }
 }
 

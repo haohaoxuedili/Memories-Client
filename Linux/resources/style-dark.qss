@@ -6,7 +6,6 @@
 /* ---- Tooltip ---- */
 QToolTip {
     background: rgba(30, 36, 48, 0.96);
-    backdrop-filter: blur(12px);
     color: #e2e8f0;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -69,7 +68,6 @@ QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
 
 QMenuBar {
     background: rgba(20, 24, 33, 0.85);
-    backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding: 4px 8px;
     font-weight: 500;
@@ -88,7 +86,6 @@ QMenuBar::item:selected {
 }
 QMenu {
     background: rgba(20, 24, 33, 0.96);
-    backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 6px;
@@ -106,7 +103,6 @@ QMenu::item:selected {
 
 QToolBar {
     background: rgba(20, 24, 33, 0.75);
-    backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding: 4px 8px;
     spacing: 6px;
@@ -135,7 +131,6 @@ QToolBar QToolButton:disabled {
 
 QStatusBar {
     background: rgba(20, 24, 33, 0.7);
-    backdrop-filter: blur(16px);
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     padding: 4px 12px;
     font-size: 12px;
@@ -240,7 +235,6 @@ QCheckBox::indicator:checked {
 
 QGroupBox {
     background: rgba(20, 24, 33, 0.5);
-    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 16px;
     margin-top: 20px;

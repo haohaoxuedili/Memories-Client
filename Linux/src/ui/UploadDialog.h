@@ -10,7 +10,7 @@
 class UploadDialog : public QDialog {
     Q_OBJECT
 public:
-    explicit UploadDialog(QWidget* parent = nullptr);
+    explicit UploadDialog(QWidget* parent = nullptr, bool embedded = false);
     void addFiles(const QStringList& filePaths);
 
 private slots:
@@ -38,8 +38,6 @@ private:
     QPushButton* m_cancelBtn;
     QPushButton* m_clearCompletedBtn;
     QPushButton* m_clearAllBtn;
-    QPushButton* m_selectFilesBtn;
-    QPushButton* m_selectFolderBtn;
 
     // Upload options
     QComboBox* m_storageDestCombo;
@@ -47,4 +45,5 @@ private:
     QComboBox* m_cdnDomainCombo;
 
     QStringList m_pendingFiles;
+    bool m_embedded;
 };

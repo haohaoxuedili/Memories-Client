@@ -73,5 +73,6 @@ private:
     bool m_selectionMode = false;
     qint64 m_nextAfterId = 0;
     bool m_loading = false;
+    bool m_loadingMore = false;
     bool m_hasMore = false;
 };

@@ -5,6 +5,8 @@
 #include <QNetworkAccessManager>
 #include <QTcpServer>
 
+class QToolButton;
+
 struct OAuthConfig {
     static inline const char* CLIENT_ID = "5m0BC15abuLhrjTi";
     static inline const char* CLIENT_SECRET = "mBzr7bO9bZlJWcQVAZF02j_Ih-Nw7GjewNY7kjWolx8";
@@ -19,7 +21,7 @@ struct OAuthConfig {
 class LoginDialog : public QDialog {
     Q_OBJECT
 public:
-    explicit LoginDialog(QWidget* parent = nullptr);
+    explicit LoginDialog(QWidget* parent = nullptr, bool embedded = false);
     ~LoginDialog();
 
 signals:
@@ -28,10 +30,18 @@ signals:
 private slots:
     void onStartLogin();
     void onLogout();
+    void openSettings();
+    void openStorageSettings();
+    void showPrivacyPolicy();
+    void showTerms();
+    void showOpenSource();
+    void openContact();
 
 private:
     void setupUi();
     void updateUi();
+    QToolButton* createActionButton(const QString& title, const QString& subtitle, const QString& iconPath);
+    void showPolicyDialog(const QString& title, const QString& body);
 
     // OAuth flow
     void startOAuthFlow();
@@ -59,4 +69,5 @@ private:
     QTcpServer* m_callbackServer = nullptr;
     QString m_oauthState;
     QString m_codeVerifier;
+    bool m_embedded;
 };

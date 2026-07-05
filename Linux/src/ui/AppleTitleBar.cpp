@@ -12,8 +12,8 @@ AppleTitleBar::AppleTitleBar(QWidget* parentWindow, const QString& title, bool c
     setFixedHeight(40);
     setCursor(Qt::ArrowCursor);
     setStyleSheet(
-        "QWidget { background: rgba(248,248,248,0.85); backdrop-filter: blur(16px); "
-        "border-bottom: 1px solid rgba(0,0,0,0.06); }");
+        "QWidget { background: rgba(255,255,255,0.18); "
+        "border-bottom: 1px solid rgba(255,255,255,0.28); }");
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(10, 0, 10, 0);
@@ -59,7 +59,7 @@ AppleTitleBar::AppleTitleBar(QWidget* parentWindow, const QString& title, bool c
 
     m_titleLabel = new QLabel(title);
     m_titleLabel->setStyleSheet(
-        "font-size: 13px; font-weight: 600; color: #334155; "
+        "font-size: 13px; font-weight: 700; color: rgba(31,41,55,0.82); "
         "background: transparent; border: none;");
     layout->addWidget(m_titleLabel);
 

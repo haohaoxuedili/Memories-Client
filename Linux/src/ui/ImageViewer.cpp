@@ -4,6 +4,7 @@
 #include "app/Settings.h"
 #include "utils/ImageCache.h"
 #include "utils/Logger.h"
+#include "ui/MessageBox.h"
 
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -21,7 +22,6 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QPainter>
 #include <QShortcut>
-#include <QStyle>
 #include <QProcess>
 #include <QtMath>
 #include <QNetworkReply>
@@ -112,88 +112,81 @@ void ImageViewer::setupToolBar() {
     m_toolBar->setMovable(false);
 
     // Back
-    m_backAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_ArrowBack), tr("返回"));
+    m_backAction = m_toolBar->addAction(QIcon(":/icons/ic_back.svg"), tr("返回"));
     m_backAction->setToolTip(tr("返回图片广场 (Esc)"));
     connect(m_backAction, &QAction::triggered, this, &ImageViewer::backToGallery);
 
     // Prev / Next
-    m_prevAction = m_toolBar->addAction(tr("◀ 上一张"));
+    m_prevAction = m_toolBar->addAction(QIcon(":/icons/ic_prev.svg"), tr("上一张"));
     m_prevAction->setToolTip(tr("上一张 (←)"));
     connect(m_prevAction, &QAction::triggered, this, &ImageViewer::goToPrevious);
 
-    m_nextAction = m_toolBar->addAction(tr("下一张 ▶"));
+    m_nextAction = m_toolBar->addAction(QIcon(":/icons/ic_next.svg"), tr("下一张"));
     m_nextAction->setToolTip(tr("下一张 (→)"));
     connect(m_nextAction, &QAction::triggered, this, &ImageViewer::goToNext);
 
     m_toolBar->addSeparator();
 
     // Zoom
-    m_zoomInAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_FileDialogContentsView), tr("放大"));
+    m_zoomInAction = m_toolBar->addAction(QIcon(":/icons/ic_zoom_in.svg"), tr("放大"));
     m_zoomInAction->setToolTip(tr("放大 (Ctrl++)"));
     connect(m_zoomInAction, &QAction::triggered, this, &ImageViewer::zoomIn);
 
-    m_zoomOutAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_FileDialogListView), tr("缩小"));
+    m_zoomOutAction = m_toolBar->addAction(QIcon(":/icons/ic_zoom_out.svg"), tr("缩小"));
     m_zoomOutAction->setToolTip(tr("缩小 (Ctrl+-)"));
     connect(m_zoomOutAction, &QAction::triggered, this, &ImageViewer::zoomOut);
 
-    m_zoomResetAction = m_toolBar->addAction(tr("原始大小"));
+    m_zoomResetAction = m_toolBar->addAction(QIcon(":/icons/ic_reset.svg"), tr("原始"));
     m_zoomResetAction->setToolTip(tr("重置缩放 (Ctrl+0)"));
     connect(m_zoomResetAction, &QAction::triggered, this, &ImageViewer::zoomReset);
 
     m_toolBar->addSeparator();
 
     // Rotate
-    m_rotateCwAction = m_toolBar->addAction(tr("↻ 右旋"));
+    m_rotateCwAction = m_toolBar->addAction(QIcon(":/icons/ic_rotate_cw.svg"), tr("右旋"));
     m_rotateCwAction->setToolTip(tr("顺时针旋转 90°"));
     connect(m_rotateCwAction, &QAction::triggered, this, &ImageViewer::rotateClockwise);
 
-    m_rotateCcwAction = m_toolBar->addAction(tr("↺ 左旋"));
+    m_rotateCcwAction = m_toolBar->addAction(QIcon(":/icons/ic_rotate_ccw.svg"), tr("左旋"));
     m_rotateCcwAction->setToolTip(tr("逆时针旋转 90°"));
     connect(m_rotateCcwAction, &QAction::triggered, this, &ImageViewer::rotateCounterClockwise);
 
     m_toolBar->addSeparator();
 
     // Flip
-    m_flipHAction = m_toolBar->addAction(tr("↔ 水平翻转"));
+    m_flipHAction = m_toolBar->addAction(QIcon(":/icons/ic_flip_h.svg"), tr("水平"));
     m_flipHAction->setToolTip(tr("左右镜像翻转"));
     connect(m_flipHAction, &QAction::triggered, this, &ImageViewer::flipHorizontal);
 
-    m_flipVAction = m_toolBar->addAction(tr("↕ 垂直翻转"));
+    m_flipVAction = m_toolBar->addAction(QIcon(":/icons/ic_flip_v.svg"), tr("垂直"));
     m_flipVAction->setToolTip(tr("上下镜像翻转"));
     connect(m_flipVAction, &QAction::triggered, this, &ImageViewer::flipVertical);
 
     m_toolBar->addSeparator();
 
     // Reset
-    m_resetAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_BrowserReload), tr("还原"));
+    m_resetAction = m_toolBar->addAction(QIcon(":/icons/ic_reset.svg"), tr("还原"));
     connect(m_resetAction, &QAction::triggered, this, &ImageViewer::resetTransforms);
 
     m_toolBar->addSeparator();
 
     // Actions
-    m_copyUrlAction = m_toolBar->addAction(tr("📋 复制链接"));
+    m_copyUrlAction = m_toolBar->addAction(QIcon(":/icons/ic_copy_link.svg"), tr("复制链接"));
     connect(m_copyUrlAction, &QAction::triggered, this, &ImageViewer::copyUrl);
 
-    m_downloadAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_DialogSaveButton), tr("下载"));
+    m_downloadAction = m_toolBar->addAction(QIcon(":/icons/ic_download.svg"), tr("下载"));
     connect(m_downloadAction, &QAction::triggered, this, &ImageViewer::downloadImage);
 
-    m_shareAction = m_toolBar->addAction(tr("分享"));
+    m_shareAction = m_toolBar->addAction(QIcon(":/icons/ic_share.svg"), tr("分享"));
     connect(m_shareAction, &QAction::triggered, this, &ImageViewer::shareImage);
 
-    m_wallpaperAction = m_toolBar->addAction(tr("🖼 设为壁纸"));
+    m_wallpaperAction = m_toolBar->addAction(QIcon(":/icons/ic_wallpaper.svg"), tr("设为壁纸"));
     connect(m_wallpaperAction, &QAction::triggered, this, &ImageViewer::setAsWallpaper);
 
-    m_printAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_FileIcon), tr("打印"));
+    m_printAction = m_toolBar->addAction(QIcon(":/icons/ic_print.svg"), tr("打印"));
     connect(m_printAction, &QAction::triggered, this, &ImageViewer::printImage);
 
-    m_infoAction = m_toolBar->addAction(
-        style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("信息"));
+    m_infoAction = m_toolBar->addAction(QIcon(":/icons/ic_info.svg"), tr("信息"));
     connect(m_infoAction, &QAction::triggered, this, &ImageViewer::showImageInfo);
 }
 
@@ -345,7 +338,7 @@ void ImageViewer::downloadImage() {
 
 void ImageViewer::shareImage() {
     QApplication::clipboard()->setText(m_currentUrl);
-    QMessageBox::information(this, tr("分享"), tr("图片链接已复制到剪贴板。"));
+    MessageBox::information(this, tr("分享"), tr("图片链接已复制到剪贴板。"));
 }
 
 void ImageViewer::setAsWallpaper() {
@@ -368,7 +361,7 @@ void ImageViewer::setAsWallpaper() {
     }
 #endif
 
-    QMessageBox::information(this, tr("壁纸"), tr("壁纸已更新。"));
+    MessageBox::information(this, tr("壁纸"), tr("壁纸已更新。"));
 }
 
 void ImageViewer::printImage() {
