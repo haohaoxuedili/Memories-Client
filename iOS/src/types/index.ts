@@ -50,7 +50,10 @@ export type FontFamily =
   | 'lxgw'
   | 'alibabapuhuiti'
   | 'zpix'
-  | 'opposans';
+  | 'opposans'
+  | 'ma-shan-zheng'
+  | 'zcool-xiaowei'
+  | 'jetbrains-mono';
 
 export interface AppSettings {
   theme: AppTheme;

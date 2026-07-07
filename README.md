@@ -31,6 +31,7 @@ Memories-Client/
 | Web 前台 | `web/` | `pnpm install`、`pnpm dev`、`pnpm build` |
 | 管理后台 | `admin/` | `npm install`、`npm run dev`、`npm run build` |
 | Android | `Android/` | `./gradlew :app:assembleDebug` |
+| iOS Web 客户端 | `iOS/` | `pnpm install`、`pnpm dev --host 127.0.0.1`、`pnpm build` |
 | Linux | `Linux/` | `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release` |
 | Windows | `Windows/` | 见 `Windows/README.md` |
 
@@ -38,14 +39,14 @@ Memories-Client/
 
 - Android：复制 `Android/app-config.example.properties` 到 `Android/app/src/main/assets/app-config.properties`，填写 API、OAuth、学校和主题配置。
 - Linux/Windows：按平台 README 安装 Qt、CMake 和编译器后构建。
-- Web/admin：依赖目录 `node_modules/` 和构建目录 `dist/` 只保留在本机。
+- iOS/Web/admin：前端依赖目录 `node_modules/` 和构建目录 `dist/` 只保留在本机。
 
 ## 清理构建产物
 
 以下目录是可再生成产物，已在 `.gitignore` 中忽略，可按需删除后重新构建：
 
 ```bash
-rm -rf build Android/.gradle Android/build Android/app/build Linux/build Linux/build-gcc14 Linux/build-release web/dist admin/dist
+rm -rf build Android/.gradle Android/build Android/app/build Linux/build Linux/build-gcc14 Linux/build-release web/dist admin/dist iOS/dist iOS/node_modules
 ```
 
 ## Web 前台
@@ -71,6 +72,24 @@ cp app-config.example.properties app/src/main/assets/app-config.properties
 ```
 
 详细说明见 [Android/README.md](Android/README.md)。
+
+## iOS Web 客户端
+
+`iOS/` 目录当前是一个基于 React 18 + TypeScript + Vite 的前端客户端，使用 `pnpm` 管理依赖。
+
+```bash
+cd iOS
+pnpm install
+pnpm dev --host 127.0.0.1
+pnpm build
+```
+
+- 图片列表、健康检查等接口仍走 `https://memories-api.mrcwoods.com`
+- 图片信息查询接口单独走 `https://img.scdn.io/api/v1.php?q=...`
+- 设置面板支持主题、字号和多款 CDN 字体；字体 CSS 与字体文件会缓存到浏览器本地后复用
+- 生产构建已补齐 PWA，包含安装图标、离线缓存和主屏安装能力
+
+详细说明见 [iOS/README.md](iOS/README.md)。
 
 ## 桌面客户端
 

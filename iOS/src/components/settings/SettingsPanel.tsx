@@ -23,6 +23,9 @@ const fonts: { value: FontFamily; label: string }[] = [
   { value: 'alibabapuhuiti', label: '阿里巴巴普惠体' },
   { value: 'zpix', label: 'Zpix 像素' },
   { value: 'opposans', label: 'OPPO Sans' },
+  { value: 'ma-shan-zheng', label: '马善政手写' },
+  { value: 'zcool-xiaowei', label: '站酷小薇' },
+  { value: 'jetbrains-mono', label: 'JetBrains Mono' },
 ];
 
 const SettingsPanel: React.FC = () => {

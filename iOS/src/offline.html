@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memories 离线模式</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f4fbf7;
+        --card: rgba(255, 255, 255, 0.88);
+        --text: #16372d;
+        --muted: #52766b;
+        --accent: #1d6e5a;
+        --accent-soft: #53c49e;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #10211d;
+          --card: rgba(24, 41, 36, 0.92);
+          --text: #edf7f2;
+          --muted: #a7c8bc;
+          --accent: #53c49e;
+          --accent-soft: #1d6e5a;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at top, rgba(83, 196, 158, 0.18), transparent 40%),
+          linear-gradient(180deg, var(--bg), color-mix(in srgb, var(--bg) 86%, #ffffff));
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Segoe UI", sans-serif;
+      }
+
+      main {
+        width: min(100%, 420px);
+        padding: 28px 24px;
+        border-radius: 28px;
+        background: var(--card);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 50px rgba(20, 44, 38, 0.12);
+      }
+
+      .badge {
+        width: 72px;
+        height: 72px;
+        border-radius: 22px;
+        background: linear-gradient(160deg, var(--accent), var(--accent-soft));
+        display: grid;
+        place-items: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 26px;
+      }
+
+      p {
+        margin: 0;
+        line-height: 1.65;
+        color: var(--muted);
+      }
+
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      a,
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 18px;
+        font: inherit;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .primary {
+        color: #ffffff;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      }
+
+      .secondary {
+        color: var(--text);
+        background: rgba(83, 196, 158, 0.14);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="badge" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 108 108" fill="none">
+          <path fill="#F8F7F2" d="M24,72l18,-22 14,15 9,-11 19,18z"/>
+          <circle cx="72" cy="34" r="9" fill="#E9C46A"/>
+        </svg>
+      </div>
+      <h1>当前处于离线模式</h1>
+      <p>Memories 已缓存核心界面资源。网络恢复后，重新打开应用即可继续获取最新图片和元数据。</p>
+      <div class="actions">
+        <button class="primary" type="button" onclick="window.location.reload()">重新尝试</button>
+        <a class="secondary" href="/">返回首页</a>
+      </div>
+    </main>
+  </body>
+</html>

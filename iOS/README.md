@@ -1,70 +1,139 @@
-介绍
-项目介绍
+# iOS Web 客户端
 
-目录结构
-├── README.md # 说明文档
-├── components.json # 组件库配置
-├── index.html # 入口文件
-├── package.json # 包管理
-├── postcss.config.js # postcss 配置
-├── public # 静态资源目录
-│   ├── favicon.png # 图标
-│   └── images # 图片资源
-├── src # 源码目录
-│   ├── App.tsx # 入口文件
-│   ├── components # 组件目录
-│   ├── contexts # 上下文目录
-│   ├── db # 数据库配置目录
-│   ├── hooks # 通用钩子函数目录
-│   ├── index.css # 全局样式
-│   ├── layout # 布局目录
-│   ├── lib # 工具库目录
-│   ├── main.tsx # 入口文件
-│   ├── routes.tsx # 路由配置
-│   ├── pages # 页面目录
-│   ├── services  # 数据库交互目录
-│   ├── types   # 类型定义目录
-├── tsconfig.app.json  # ts 前端配置文件
-├── tsconfig.json # ts 配置文件
-├── tsconfig.node.json # ts node端配置文件
-└── vite.config.ts # vite 配置文件
-技术栈
-Vite、TypeScript、React、Supabase
+`iOS/` 目录当前承载的是 Memories 的 iOS 风格前端客户端，而不是原生 Swift 工程。项目基于 React 18、TypeScript、Vite 和 Tailwind CSS，使用 `pnpm` 管理依赖，适合在桌面浏览器或移动 WebView 场景下调试和构建。
 
-本地开发
-如何在本地编辑代码？
-您可以选择 VSCode 或者您常用的任何 IDE 编辑器，唯一的要求是安装 Node.js 和 npm.
+## 技术栈
 
-环境要求
-# Node.js ≥ 20
-# npm ≥ 10
-例如：
-# node -v   # v20.18.3
-# npm -v    # 10.8.2
-具体安装步骤如下：
+- React 18
+- TypeScript 5
+- Vite（`rolldown-vite`）
+- Tailwind CSS
+- Biome
+- pnpm 10
 
-在 Windows 上安装 Node.js
-# Step 1: 访问Node.js官网：https://nodejs.org/，点击下载后，会根据你的系统自动选择合适的版本（32位或64位）。
-# Step 2: 运行安装程序：下载完成后，双击运行安装程序。
-# Step 3: 完成安装：按照安装向导完成安装过程。
-# Step 4: 验证安装：在命令提示符（cmd）或IDE终端（terminal）中输入 node -v 和 npm -v 来检查 Node.js 和 npm 是否正确安装。
-在 macOS 上安装 Node.js
-# Step 1: 使用Homebrew安装（推荐方法）：打开终端。输入命令brew install node并回车。如果尚未安装Homebrew，需要先安装Homebrew，
-可以通过在终端中运行如下命令来安装：
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-或者使用官网安装程序：访问Node.js官网。下载macOS的.pkg安装包。打开下载的.pkg文件，按照提示完成安装。
-# Step 2: 验证安装：在命令提示符（cmd）或IDE终端（terminal）中输入 node -v 和 npm -v 来检查 Node.js 和 npm 是否正确安装。
-安装完后按照如下步骤操作：
-# Step 1: 下载代码包
-# Step 2: 解压代码包
-# Step 3: 用IDE打开代码包，进入代码目录
-# Step 4: IDE终端输入命令行，安装依赖：npm i
-# Step 5: IDE终端输入命令行，启动开发服务器：npm run dev -- --host 127.0.0.1
-如何开发后端服务？
-配置环境变量，安装相关依赖 如需使用数据库，请使用 supabase 官方版本或自行部署开源版本的 Supabase
+## 目录结构
 
-如何配置应用中的三方 API？
-具体三方 API 调用方法，请参考帮助文档：源码导出，了解更多详细内容。
+```text
+iOS/
+├── README.md
+├── biome.json
+├── components.json
+├── index.html
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.check.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite.config.ts
+├── docs/
+│   └── DESIGN.md
+└── src/
+    ├── App.tsx
+    ├── main.tsx
+    ├── index.css
+    ├── routes.tsx
+    ├── components/
+    ├── contexts/
+    ├── hooks/
+    ├── lib/
+    ├── pages/
+    └── types/
+```
 
-了解更多
-您也可以查看帮助文档：源码导出，了解更多详细内容。
+## 环境要求
+
+- Node.js 20 及以上
+- pnpm 10 及以上
+
+建议先确认版本：
+
+```bash
+node -v
+pnpm -v
+```
+
+## 安装与运行
+
+```bash
+cd iOS
+pnpm install
+pnpm dev --host 127.0.0.1
+```
+
+默认构建命令：
+
+```bash
+cd iOS
+pnpm build
+```
+
+项目内常用脚本：
+
+- `pnpm dev`：启动开发服务器
+- `pnpm build`：生成生产构建
+- `pnpm lint`：执行类型检查、Biome 检查，并串行验证构建
+
+## 接口说明
+
+- 主 API 基址：`https://memories-api.mrcwoods.com`
+- 图片上传接口：`https://img.scdn.io/api/v1.php`
+- 图片信息查询接口：`https://img.scdn.io/api/v1.php?q=文件名`
+
+其中，图片列表、登录态校验和健康检查仍使用主 API；只有图片信息查询单独切到了 `img.scdn.io` 域名。
+
+## 主要功能
+
+- 校园图片广场与分页浏览
+- 图片预览、下载、复制链接与元数据查询
+- OAuth 登录与上传流程
+- PWA 安装、离线打开与主屏使用
+- 主题切换、字号调整
+- 多款 CDN 字体切换
+
+## PWA 离线分发
+
+当前 iOS Web 客户端已经补齐 PWA 基础能力，可作为“可离线分发”的 Web 安装包使用：
+
+- 构建产物内包含 `manifest.webmanifest`、`sw.js` 和安装图标
+- 首次访问后会缓存应用壳、字体资源和部分远程接口响应
+- 断网时可打开离线页面，恢复联网后继续刷新数据
+- 在 iPhone Safari 中可通过“添加到主屏幕”安装到桌面
+
+发布构建命令：
+
+```bash
+cd iOS
+pnpm build
+```
+
+构建完成后，`dist/` 可直接部署到任意静态站点托管平台。
+
+## 字体与本地缓存
+
+设置面板当前内置以下字体选项：
+
+- 系统默认
+- 思源黑体
+- 思源宋体
+- 霞鹜文楷
+- 阿里巴巴普惠体
+- Zpix 像素
+- OPPO Sans
+- 马善政手写
+- 站酷小薇
+- JetBrains Mono
+
+字体加载策略如下：
+
+- 首次选择 CDN 字体时，先下载字体 CSS
+- 解析 CSS 中引用的字体文件并写入浏览器 Cache Storage
+- 后续再次切换同一字体时优先复用本地缓存
+- 缓存失败时自动回退到远程样式加载，不阻断页面使用
+
+## 故障排查
+
+- 如果依赖安装后 `vite` 相关包异常，优先重新执行 `pnpm install`，不要混用 `npm install`
+- 如果 `pnpm lint` 卡在样式检查，通常仍会继续执行；关注最终退出码即可
+- 如果需要清理前端产物，可删除 `node_modules/` 和 `dist/` 后重装依赖

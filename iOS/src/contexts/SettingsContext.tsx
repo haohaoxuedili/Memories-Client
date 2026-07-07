@@ -2,6 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { AppSettings, AppTheme, AppMode, FontFamily } from '@/types';
 import { DEFAULT_SETTINGS } from '@/types';
 
+const FONT_CACHE_NAME = 'ios-gallery-font-cache-v1';
+
+interface FontConfig {
+  family: string;
+  url?: string;
+  injectStyle?: string;
+}
+
 interface SettingsContextValue extends AppSettings {
   setTheme: (theme: AppTheme) => void;
   setMode: (mode: AppMode) => void;
@@ -20,7 +28,7 @@ const themeLabels: Record<AppTheme, string> = {
   neon: '夜航霓光',
 };
 
-const fontMap: Record<FontFamily, { family: string; url?: string; injectStyle?: string }> = {
+const fontMap: Record<FontFamily, FontConfig> = {
   system: { family: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif' },
   'noto-sans': {
     family: '"Noto Sans SC", sans-serif',
@@ -54,11 +62,111 @@ const fontMap: Record<FontFamily, { family: string; url?: string; injectStyle?: 
       }
     `,
   },
+  'ma-shan-zheng': {
+    family: '"Ma Shan Zheng", "KaiTi", cursive',
+    url: 'https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap',
+  },
+  'zcool-xiaowei': {
+    family: '"ZCOOL XiaoWei", "STKaiti", serif',
+    url: 'https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap',
+  },
+  'jetbrains-mono': {
+    family: '"JetBrains Mono", "SFMono-Regular", Consolas, monospace',
+    url: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap',
+  },
 };
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
 
-function loadFontCSS(font: FontFamily) {
+async function getCachedText(url: string): Promise<string | null> {
+  try {
+    const cache = await caches.open(FONT_CACHE_NAME);
+    const cached = await cache.match(url);
+    if (!cached) return null;
+    return await cached.text();
+  } catch {
+    return null;
+  }
+}
+
+async function putCachedResponse(url: string, response: Response): Promise<void> {
+  try {
+    const cache = await caches.open(FONT_CACHE_NAME);
+    await cache.put(url, response.clone());
+  } catch {
+    // 缓存失败不影响字体使用
+  }
+}
+
+async function fetchTextWithCache(url: string): Promise<string> {
+  const cachedText = await getCachedText(url);
+  if (cachedText) {
+    return cachedText;
+  }
+
+  const response = await fetch(url, { mode: 'cors', credentials: 'omit' });
+  if (!response.ok) {
+    throw new Error(`字体样式下载失败: ${response.status}`);
+  }
+
+  await putCachedResponse(url, response);
+  return await response.text();
+}
+
+async function fetchBlobUrlWithCache(url: string): Promise<string> {
+  try {
+    const cache = await caches.open(FONT_CACHE_NAME);
+    const cached = await cache.match(url);
+    if (cached) {
+      const blob = await cached.blob();
+      return URL.createObjectURL(blob);
+    }
+
+    const response = await fetch(url, { mode: 'cors', credentials: 'omit' });
+    if (!response.ok) {
+      throw new Error(`字体文件下载失败: ${response.status}`);
+    }
+
+    await cache.put(url, response.clone());
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch {
+    return url;
+  }
+}
+
+function resolveFontAssetUrl(assetUrl: string, baseUrl: string): string {
+  try {
+    return new URL(assetUrl, baseUrl).toString();
+  } catch {
+    return assetUrl;
+  }
+}
+
+async function inlineFontAssets(cssText: string, sourceUrl: string): Promise<string> {
+  const matches = Array.from(cssText.matchAll(/url\((['"]?)(.*?)\1\)/g));
+  if (!matches.length) {
+    return cssText;
+  }
+
+  const replacements = await Promise.all(
+    matches.map(async ([fullMatch, , rawUrl]) => {
+      const trimmedUrl = rawUrl.trim();
+      if (!trimmedUrl || trimmedUrl.startsWith('data:')) {
+        return [fullMatch, fullMatch] as const;
+      }
+
+      const resolvedUrl = resolveFontAssetUrl(trimmedUrl, sourceUrl);
+      const localUrl = await fetchBlobUrlWithCache(resolvedUrl);
+      const nextValue = fullMatch.replace(rawUrl, localUrl);
+      return [fullMatch, nextValue] as const;
+    }),
+  );
+
+  return replacements.reduce((result, [searchValue, replaceValue]) => result.split(searchValue).join(replaceValue), cssText);
+}
+
+async function loadFontCSS(font: FontFamily) {
   const config = fontMap[font];
   if (!config) return;
 
@@ -74,12 +182,24 @@ function loadFontCSS(font: FontFamily) {
   }
 
   if (config.url) {
-    const link = document.createElement('link');
-    link.id = id;
-    link.rel = 'stylesheet';
-    link.href = config.url;
-    link.crossOrigin = 'anonymous';
-    document.head.appendChild(link);
+    const style = document.createElement('style');
+    style.id = id;
+    style.setAttribute('data-font-loading', 'true');
+    document.head.appendChild(style);
+
+    try {
+      const cssText = await fetchTextWithCache(config.url);
+      style.textContent = await inlineFontAssets(cssText, config.url);
+    } catch {
+      document.head.removeChild(style);
+
+      const link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      link.href = config.url;
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+    }
   }
 }
 
@@ -96,7 +216,7 @@ function applySettings(settings: AppSettings) {
 
   const config = fontMap[settings.font];
   document.body.style.fontFamily = config.family;
-  loadFontCSS(settings.font);
+  void loadFontCSS(settings.font);
 }
 
 function loadSettings(): AppSettings {

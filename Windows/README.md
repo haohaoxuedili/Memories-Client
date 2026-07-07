@@ -1,11 +1,11 @@
-# Memories Client (C++)
+# Memories Client (Windows)
 
-跨平台 Linux 图片管理桌面客户端，使用 C++/Qt6 构建。高性能、低资源占用、支持无图形化模式启动。
+Windows 客户端使用 C++20、Qt 6 和 CMake 构建，面向图片浏览、上传和本地管理场景。当前目录内容与 Linux 版结构接近，但这里的说明以 Windows 构建和运行方式为准。
 
 ## 功能概览
 
 | 功能模块 | 说明 |
-|---------|------|
+| -------- | ---- |
 | **服务检测** | 启动时自动 GET `/health` 健康检查 |
 | **图片广场** | 分页浏览图片列表，缩略图网格展示 |
 | **图片预览** | 旋转、翻转、缩放、拖拽，分享/下载/复制URL/打印/设壁纸 |
@@ -18,85 +18,64 @@
 
 ## 安装方式
 
-```bash
-# 给安装脚本添加执行权限
-chmod +x scripts/install.sh
+推荐直接使用 CMake 在本地构建；如果已经准备好 Qt 和编译器环境，也可以通过 VS Code、Qt Creator 或 Visual Studio 打开目录进行编译。
 
-# 完整 GUI 安装（自动检测发行版、安装依赖、编译、安装）
-./scripts/install.sh install
+## 构建前准备
 
-# 仅无图形化版本
-./scripts/install.sh install-headless
+- Qt 6（Core、Gui、Widgets、Network、Svg、OpenGLWidgets）
+- CMake 3.20 及以上
+- 支持 C++20 的 MSVC
+- Ninja 或 Visual Studio 生成器
 
-# 生成 .deb 包
-./scripts/install.sh deb
-
-# 生成 .rpm 包
-./scripts/install.sh rpm
-
-# 生成全部包格式
-./scripts/install.sh all-packages
-
-# 卸载
-./scripts/install.sh uninstall
-```
+如果使用 Qt 官方安装器，先确保 `CMAKE_PREFIX_PATH` 能指向 Qt 安装目录，或在 CMake 配置时显式传入。
 
 ## 从源码构建
 
 ```bash
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_GUI=ON
-cmake --build . --parallel $(nproc)
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
 ```
 
-### 构建无 GUI 版本
+如果使用 Visual Studio 生成器，可改为：
 
 ```bash
-mkdir build-headless && cd build-headless
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_GUI=OFF
-cmake --build . --parallel $(nproc)
+cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+cmake --build build --config Release
 ```
 
-## 使用
-
-### GUI 模式
+## 运行
 
 ```bash
-memories-client
-# 或
-./build/MemoriesClient
-```
-
-### 无图形化模式
-
-```bash
-memories-client --headless
-# 或
-memories-client-headless --health
-memories-client-headless --list
+build/MemoriesClient.exe
 ```
 
 ## 依赖
 
 - CMake >= 3.20
-- Qt 6 (Core, Gui, Widgets, Network, Quick, Svg, OpenGLWidgets)
-- C++20 编译器 (GCC 11+ / Clang 14+)
-- X11 开发库
+- Qt 6
+- MSVC 2022 或更新版本
+- C++20 编译器
 
 ## API 端点
 
 | 端点 | 方法 | 说明 |
-|------|------|------|
+| ---- | ---- | ---- |
 | `/health` | GET | 服务健康检查 |
 | `/images?after_id=0` | GET | 分页获取图片列表（每页20条） |
 | `/images` | POST | 写入图片URL，返回自增ID |
 | `img.scdn.io/api/v1.php` | POST | 上传图片文件 |
 | `img.scdn.io/api/v1.php?q=` | GET | 查询图片元数据 |
 
+默认配置下：
+
+- 主 API 基址为 `https://memories-api.mrcwoods.com`
+- 图片上传接口为 `https://img.scdn.io/api/v1.php`
+- 图片信息查询接口为 `https://img.scdn.io/api/v1.php?q=...`
+
 ## 项目结构
 
-```
-cpp-client/
+```text
+Windows/
 ├── CMakeLists.txt
 ├── src/
 │   ├── main.cpp              # 入口（GUI/Headless 双模式）
@@ -122,6 +101,7 @@ cpp-client/
 │       ├── ImageCache.h/cpp   # 图片缓存（内存+磁盘）
 │       └── Logger.h/cpp       # 日志系统
 ├── resources/
-└── scripts/
-    └── install.sh
+├── scripts/
+│   └── install.sh
+└── README.md
 ```

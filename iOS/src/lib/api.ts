@@ -1,6 +1,7 @@
 import type { ImageListResponse, MetadataResponse, NetworkInfo } from '@/types';
 
 const BASE_URL = 'https://memories-api.mrcwoods.com';
+const IMAGE_METADATA_BASE_URL = 'https://img.scdn.io';
 
 export async function checkHealth(): Promise<boolean> {
   try {
@@ -74,7 +75,7 @@ export async function fetchImages(afterId = 0): Promise<ImageListResponse> {
 }
 
 export async function fetchImageMetadata(query: string | number): Promise<MetadataResponse> {
-  const response = await fetch(`${BASE_URL}/api/v1.php?q=${encodeURIComponent(query)}`, {
+  const response = await fetch(`${IMAGE_METADATA_BASE_URL}/api/v1.php?q=${encodeURIComponent(query)}`, {
     cache: 'no-store',
   });
 
