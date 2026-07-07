@@ -101,6 +101,10 @@ pnpm build
 - 断网时可打开离线页面，恢复联网后继续刷新数据
 - 在 iPhone Safari 中可通过“添加到主屏幕”安装到桌面
 
+GitHub Pages 部署完成后，默认线上地址为：
+
+- `https://idoknow.github.io/Memories-Client/`
+
 发布构建命令：
 
 ```bash
@@ -109,6 +113,33 @@ pnpm build
 ```
 
 构建完成后，`dist/` 可直接部署到任意静态站点托管平台。
+
+## 安装说明
+
+### iPhone / iPad
+
+1. 使用 Safari 打开线上地址。
+2. 等待首页加载完成一次，让浏览器写入缓存。
+3. 点击底部分享按钮，选择“添加到主屏幕”。
+4. 返回桌面打开 `Memories` 图标，即可像独立应用一样使用。
+
+### Android
+
+1. 使用 Chrome 或 Edge 打开线上地址。
+2. 当浏览器出现“安装应用”提示时直接确认。
+3. 若没有自动提示，可在浏览器菜单中选择“安装应用”或“添加到主屏幕”。
+
+## Release 校验清单
+
+每次发版后至少检查以下项目：
+
+- 首页状态检查可以正常跳转到图片页
+- `manifest.webmanifest`、`sw.js` 和 `workbox-*.js` 已生成
+- 页面图标、Apple Touch Icon 和 Maskable Icon 能正常加载
+- 断网后重新打开应用会显示离线页，而不是浏览器默认错误页
+- 图片信息查询走 `https://img.scdn.io/api/v1.php?q=...`
+- 官网导航指向 `https://memories.mrcwoods.com`
+- 首次访问后再次打开，常用静态资源可从本地缓存命中
 
 ## 字体与本地缓存
 

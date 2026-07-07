@@ -4,7 +4,10 @@ import svgr from "vite-plugin-svgr";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
+const basePath = process.env.VITE_BASE_PATH || "/";
+
 export default defineConfig({
+  base: basePath,
   plugins: [
     react(),
     svgr({
@@ -33,22 +36,22 @@ export default defineConfig({
         background_color: "#F4FBF7",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
-        scope: "/",
+        start_url: basePath,
+        scope: basePath,
         lang: "zh-CN",
         icons: [
           {
-            src: "/assets/pwa-192x192.png",
+            src: `${basePath}assets/pwa-192x192.png`,
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/assets/pwa-512x512.png",
+            src: `${basePath}assets/pwa-512x512.png`,
             sizes: "512x512",
             type: "image/png",
           },
           {
-            src: "/assets/maskable-icon-512x512.png",
+            src: `${basePath}assets/maskable-icon-512x512.png`,
             sizes: "512x512",
             type: "image/png",
             purpose: "maskable",
@@ -57,7 +60,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
-        navigateFallback: "/offline.html",
+        navigateFallback: `${basePath}offline.html`,
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
@@ -113,6 +116,53 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("react") || id.includes("scheduler") || id.includes("react-router")) {
+              return "react";
+            }
+
+            if (id.includes("@sentry")) {
+              return "sentry";
+            }
+
+            if (id.includes("motion") || id.includes("framer-motion")) {
+              return "motion";
+            }
+
+            if (id.includes("recharts")) {
+              return "charts";
+            }
+
+            if (id.includes("react-hook-form") || id.includes("@hookform/resolvers") || id.includes("zod")) {
+              return "forms";
+            }
+
+            if (id.includes("video-react")) {
+              return "video";
+            }
+
+            if (id.includes("qrcode")) {
+              return "qrcode";
+            }
+
+            if (id.includes("next-themes")) {
+              return "themes";
+            }
+
+            if (id.includes("sonner") || id.includes("lucide-react")) {
+              return "ui";
+            }
+          }
+
+          return undefined;
+        },
+      },
     },
   },
 });

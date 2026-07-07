@@ -30,13 +30,13 @@ const Footer: React.FC = () => {
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">联系方式</p>
               <div className="flex flex-col items-center md:items-end gap-2.5">
                 <a
-                  href="https://mrcwoods.com"
+                  href="https://memories.mrcwoods.com"
                   target="_blank"
                   rel="noreferrer noopener"
                   className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-all duration-200 min-h-10"
                 >
                   <Globe className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
-                  <span>mrcwoods.com</span>
+                  <span>memories.mrcwoods.com</span>
                 </a>
                 <a
                   href="mailto:mail@mrcwoods.com"

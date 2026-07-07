@@ -1,6 +1,8 @@
-import StatusCheckPage from './pages/StatusCheckPage';
-import GalleryPage from './pages/GalleryPage';
+import { lazy } from 'react';
 import type { ReactNode } from 'react';
+
+const StatusCheckPage = lazy(() => import('./pages/StatusCheckPage'));
+const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 
 export interface RouteConfig {
   name: string;
