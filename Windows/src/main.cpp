@@ -19,7 +19,7 @@
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
     QCoreApplication::setApplicationName("Memories");
-    QCoreApplication::setApplicationVersion("1.1.0");
+    QCoreApplication::setApplicationVersion("1.2.0");
 
     QCommandLineParser parser;
     parser.setApplicationDescription("Memories Image Client - Headless Mode");
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Memories");
-    QApplication::setApplicationVersion("1.1.0");
+    QApplication::setApplicationVersion("1.2.0");
     QApplication::setOrganizationName("memories");
     QApplication::setOrganizationDomain("memories.mrcwoods.com");
 

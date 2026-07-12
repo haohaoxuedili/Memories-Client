@@ -132,7 +132,7 @@ void ImageInfoDialog::queryImage(const QString& imageUrl) {
     apiUrl.setQuery(query);
 
     QNetworkRequest req(apiUrl);
-    req.setHeader(QNetworkRequest::UserAgentHeader, "Memories-Client/1.1.0");
+    req.setHeader(QNetworkRequest::UserAgentHeader, "Memories-Client/1.2.0");
 
     auto* reply = m_manager->get(req);
 

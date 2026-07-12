@@ -194,7 +194,7 @@ void MainWindow::setupMenuBar(QMenuBar* menuBar) {
     auto* aboutAction = helpMenu->addAction(tr("关于(&A)"));
     connect(aboutAction, &QAction::triggered, this, [this]() {
         QMessageBox::about(this, tr("关于 Memories"),
-            tr("Memories v1.1.0\n跨平台图片管理与分享客户端。"));
+            tr("Memories v1.2.0\n跨平台图片管理与分享客户端。"));
     });
 }
 
