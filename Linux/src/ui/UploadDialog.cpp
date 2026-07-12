@@ -9,6 +9,7 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QFrame>
 #include <QGroupBox>
 #include <QFormLayout>
 #include <QListWidget>
@@ -83,6 +84,20 @@ void UploadDialog::setupUi() {
     mainLayout->setContentsMargins(24, m_embedded ? 24 : 16, 24, 24);
     outerLayout->addLayout(mainLayout);
 
+    auto* heroPanel = new QFrame(this);
+    heroPanel->setProperty("uploadHero", true);
+    auto* heroLayout = new QVBoxLayout(heroPanel);
+    heroLayout->setContentsMargins(20, 16, 20, 16);
+    heroLayout->setSpacing(4);
+    auto* heroTitle = new QLabel(tr("上传中心"), heroPanel);
+    heroTitle->setProperty("pageTitle", true);
+    auto* heroSubtitle = new QLabel(tr("批量添加图片或视频，自动处理格式、存储与 CDN 链接"), heroPanel);
+    heroSubtitle->setProperty("pageSubtitle", true);
+    heroSubtitle->setWordWrap(true);
+    heroLayout->addWidget(heroTitle);
+    heroLayout->addWidget(heroSubtitle);
+    mainLayout->addWidget(heroPanel);
+
     // Upload options in a compact row
     auto* optionsGroup = new QGroupBox(tr("上传选项"));
     auto* optionsLayout = new QHBoxLayout(optionsGroup);
@@ -91,10 +106,7 @@ void UploadDialog::setupUi() {
     auto configureUploadCombo = [](QComboBox* combo) {
         combo->setProperty("uploadOptionCombo", true);
         combo->view()->setProperty("uploadOptionPopup", true);
-        combo->view()->setAttribute(Qt::WA_TranslucentBackground);
         combo->view()->viewport()->setProperty("uploadOptionPopupViewport", true);
-        combo->view()->viewport()->setAttribute(Qt::WA_TranslucentBackground);
-        combo->view()->window()->setAttribute(Qt::WA_TranslucentBackground);
     };
 
     auto* opt1 = new QWidget();
@@ -135,10 +147,10 @@ void UploadDialog::setupUi() {
     // Queue label
     auto* queueHeader = new QHBoxLayout();
     auto* queueLabel = new QLabel(tr("上传队列"));
-    queueLabel->setStyleSheet("font-weight: 800; font-size: 14px; color: rgba(16,35,38,0.88);");
+    queueLabel->setProperty("sectionTitle", true);
     queueHeader->addWidget(queueLabel);
     queueHeader->addStretch();
-    m_countLabel->setStyleSheet("color: rgba(63,89,97,0.78); font-size: 12px; font-weight: 600;");
+    m_countLabel->setProperty("sectionMeta", true);
     queueHeader->addWidget(m_countLabel);
     auto* addFileBtn = new QPushButton(tr("添加文件"));
     addFileBtn->setProperty("primaryBtn", true);
@@ -160,7 +172,7 @@ void UploadDialog::setupUi() {
 
     // Status + buttons
     auto* bottomLayout = new QHBoxLayout();
-    m_statusLabel->setStyleSheet("color: rgba(63,89,97,0.78); font-size: 12px; font-weight: 600;");
+    m_statusLabel->setProperty("sectionMeta", true);
     bottomLayout->addWidget(m_statusLabel);
     bottomLayout->addStretch();
     m_clearCompletedBtn->setProperty("flat", true);

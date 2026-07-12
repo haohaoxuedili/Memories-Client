@@ -14,6 +14,28 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const SCHOOL_LOGO = 'https://cloudflarecnimg.scdn.io/i/6a34e75125111_1781851985.png';
 
+// 👇 新增下载链接映射（请替换为你的真实地址）
+const DOWNLOAD_URLS: Record<string, Record<string, Record<string, string>>> = {
+  'guilin-kuiguang': {
+    android: {
+      apk: 'https://github.com/idoknow/Memories-Client/releases/download/v1.1.0/Memories-v1.1.0.apk',
+    },
+    ios: {
+      pwa: 'https://memories-ios.mrcwoods.com/', // 或具体的 PWA 安装指引页
+    },
+    windows: {
+      exe: 'https://github.com/idoknow/Memories-Client/releases/download/1.1.2/Memories-1.1.2-win64.exe',
+    },
+    macos: {
+      dmg: '#',
+    },
+    linux: {
+      deb: 'https://github.com/idoknow/Memories-Client/releases/download/v1.1.1/memories-1.1.1-Linux.deb',
+      rpm: 'https://github.com/idoknow/Memories-Client/releases/download/v1.1.1/memories-1.1.1-Linux.rpm',
+    },
+  },
+};
+
 interface Platform {
   icon: React.FC<{ className?: string }>;
   name: string;
@@ -34,14 +56,24 @@ const DownloadPage: React.FC = () => {
 
   const mobilePlatforms: Platform[] = [
     { icon: AndroidIcon, name: 'Android', desc: '支持 Android 8.0 及以上', version: 'v1.1.0', size: '135 KB', updated: '2026-07-03', downloads: [{ label: 'apk', format: 'apk' }] },
-    { icon: AppleIcon, name: 'iOS', desc: '支持 iOS 14.0 及以上', version: 'v0.0.0', size: '0 B', updated: '2026-00-00', downloads: [{ label: 'ipa', format: 'ipa' }] },
+    { icon: AppleIcon, name: 'iOS', desc: '支持 iOS 14.0 及以上', version: 'v1.1.3', size: '10 KB', updated: '2026-07-08', downloads: [{ label: 'PWA', format: 'PWA' }] },
   ];
 
   const desktopPlatforms: Platform[] = [
-    { icon: WindowsIcon, name: 'Windows', desc: '支持 Windows 10 及以上', version: 'v0.0.0', size: '0 B', updated: '26-00-00', downloads: [{ label: 'msi', format: 'msi' }] },
+    { icon: WindowsIcon, name: 'Windows', desc: '支持 Windows 10 及以上', version: 'v1.1.2', size: '17.1 MB', updated: '26-07-06', downloads: [{ label: 'exe', format: 'exe' }] },
     { icon: MacOsIcon, name: 'macOS', desc: '支持 macOS 11 及以上', version: 'v0.0.0', size: '0 B', updated: '26-00-00', downloads: [{ label: 'dmg', format: 'dmg' }] },
-    { icon: LinuxIcon, name: 'Linux', desc: '支持主流发行版', version: 'v0.0.0', size: '0 B', updated: '26-00-00', downloads: [{ label: 'deb', format: 'deb' }, { label: 'rpm', format: 'rpm' }] },
+    { icon: LinuxIcon, name: 'Linux', desc: '支持主流发行版', version: 'v1.1.0', size: '656 KB', updated: '26-07-06', downloads: [{ label: 'deb', format: 'deb' }, { label: 'rpm', format: 'rpm' }] },
   ];
+
+  // 👇 提取点击处理函数
+  const handleDownload = (platformName: string, format: string) => {
+    const url = selectedSchool
+      ? DOWNLOAD_URLS[selectedSchool]?.[platformName.toLowerCase()]?.[format]
+      : undefined;
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <MainLayout>
@@ -163,7 +195,12 @@ const DownloadPage: React.FC = () => {
                             </div>
                             <div className="flex gap-2">
                               {p.downloads.map((d) => (
-                                <Button key={d.format} className="flex-1" size="sm" onClick={() => {}}>
+                                <Button
+                                  key={d.format}
+                                  className="flex-1"
+                                  size="sm"
+                                  onClick={() => handleDownload(p.name, d.format)} // 👈 修改点击事件
+                                >
                                   <Download className="mr-2 h-4 w-4" />
                                   {d.label}
                                 </Button>
@@ -222,7 +259,12 @@ const DownloadPage: React.FC = () => {
                             </div>
                             <div className="flex gap-2">
                               {p.downloads.map((d) => (
-                                <Button key={d.format} className="flex-1" size="sm" onClick={() => {}}>
+                                <Button
+                                  key={d.format}
+                                  className="flex-1"
+                                  size="sm"
+                                  onClick={() => handleDownload(p.name, d.format)} // 👈 修改点击事件
+                                >
                                   <Download className="mr-2 h-4 w-4" />
                                   {d.label}
                                 </Button>

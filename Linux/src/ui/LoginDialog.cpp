@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QFrame>
 #include <QGroupBox>
 #include <QLabel>
 #include <QPushButton>
@@ -72,6 +73,19 @@ void LoginDialog::setupUi() {
     mainLayout->setSpacing(14);
     mainLayout->setContentsMargins(26, m_embedded ? 26 : 18, 26, 24);
     outerLayout->addLayout(mainLayout);
+
+    auto* heroPanel = new QFrame(this);
+    heroPanel->setProperty("profileHero", true);
+    auto* heroLayout = new QVBoxLayout(heroPanel);
+    heroLayout->setContentsMargins(20, 16, 20, 16);
+    heroLayout->setSpacing(4);
+    auto* heroTitle = new QLabel(tr("个人中心"), heroPanel);
+    heroTitle->setProperty("pageTitle", true);
+    auto* heroSubtitle = new QLabel(tr("管理账号授权、主题偏好与本地数据"), heroPanel);
+    heroSubtitle->setProperty("pageSubtitle", true);
+    heroLayout->addWidget(heroTitle);
+    heroLayout->addWidget(heroSubtitle);
+    mainLayout->addWidget(heroPanel);
 
     // User info section
     auto* infoGroup = new QGroupBox(tr("当前用户"));

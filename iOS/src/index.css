@@ -1,0 +1,371 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* iOS Design System — 基于 Apple 系统级视觉语言 */
+/* 所有颜色使用 HSL，主题通过 html class 切换：theme-minimal / theme-moss / theme-sunset / theme-cyan / theme-neon */
+
+@layer base {
+  :root {
+    --radius: 1rem;
+    --font-scale: 1;
+
+    /* 默认：青蓝玻璃 */
+    --background: 210 100% 97%;
+    --foreground: 220 20% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 18%;
+    --primary: 211 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 20% 18%;
+    --muted: 210 40% 93%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 199 92% 66%;
+    --accent-foreground: 220 20% 18%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 30% 88%;
+    --input: 210 30% 88%;
+    --ring: 211 100% 52%;
+    --chart-1: 211 100% 52%;
+    --chart-2: 199 92% 66%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 35 100% 60%;
+    --chart-5: 280 65% 60%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 18%;
+    --sidebar-primary: 211 100% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 220 20% 18%;
+    --sidebar-border: 210 30% 88%;
+    --sidebar-ring: 211 100% 52%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(211 100% 52%), hsl(199 92% 66%));
+    --gradient-accent: linear-gradient(135deg, hsl(199 92% 66%), hsl(240 100% 75%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(210 100% 96%), hsl(210 100% 97%)),
+      radial-gradient(ellipse at 80% 100%, hsl(199 80% 92%), hsl(210 100% 97%));
+    --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.9), hsla(210 60% 96% / 0.8));
+  }
+
+  /* 简约黑白 */
+  html.theme-minimal {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 12%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 40%;
+    --accent-foreground: 0 0% 100%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 0% 0%;
+    --chart-1: 0 0% 0%;
+    --chart-2: 0 0% 40%;
+    --chart-3: 0 0% 70%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-border: 0 0% 88%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 25%), hsl(0 0% 0%));
+    --gradient-accent: linear-gradient(135deg, hsl(0 0% 60%), hsl(0 0% 35%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(0 0% 100%), hsl(0 0% 99%)),
+      radial-gradient(ellipse at 80% 100%, hsl(210 15% 96%), hsl(0 0% 100%));
+    --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.95), hsla(210 15% 97% / 0.9));
+  }
+
+  /* 苔光晨雾 */
+  html.theme-moss {
+    --background: 60 14% 96%;
+    --foreground: 80 12% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 80 12% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 80 12% 18%;
+    --primary: 90 18% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 60 14% 92%;
+    --secondary-foreground: 80 12% 18%;
+    --muted: 60 12% 88%;
+    --muted-foreground: 80 10% 45%;
+    --accent: 25 22% 57%;
+    --accent-foreground: 0 0% 100%;
+    --border: 60 12% 85%;
+    --input: 60 12% 85%;
+    --ring: 90 18% 38%;
+    --chart-1: 90 18% 38%;
+    --chart-2: 25 22% 57%;
+    --chart-3: 160 30% 45%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-border: 60 12% 85%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(120 25% 45%), hsl(160 30% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(80 35% 65%), hsl(25 25% 60%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(90 30% 96%), hsl(60 14% 96%)),
+      radial-gradient(ellipse at 80% 100%, hsl(160 25% 92%), hsl(60 14% 96%));
+    --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.92), hsla(80 25% 94% / 0.85));
+  }
+
+  /* 霞橙晴空 */
+  html.theme-sunset {
+    --background: 30 100% 97%;
+    --foreground: 20 30% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 30% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 30% 18%;
+    --primary: 17 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 60% 95%;
+    --secondary-foreground: 20 30% 18%;
+    --muted: 30 40% 92%;
+    --muted-foreground: 20 20% 45%;
+    --accent: 197 71% 67%;
+    --accent-foreground: 220 30% 18%;
+    --border: 30 40% 88%;
+    --input: 30 40% 88%;
+    --ring: 17 100% 60%;
+    --chart-1: 17 100% 60%;
+    --chart-2: 197 71% 67%;
+    --chart-3: 35 90% 55%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-border: 30 40% 88%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(17 100% 65%), hsl(35 100% 62%));
+    --gradient-accent: linear-gradient(135deg, hsl(25 90% 68%), hsl(340 70% 72%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(30 100% 96%), hsl(30 100% 97%)),
+      radial-gradient(ellipse at 80% 100%, hsl(20 80% 92%), hsl(30 100% 97%));
+    --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.92), hsla(30 60% 95% / 0.85));
+  }
+
+  /* 青蓝玻璃 */
+  html.theme-cyan {
+    --background: 210 100% 97%;
+    --foreground: 220 20% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 18%;
+    --primary: 211 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 20% 18%;
+    --muted: 210 40% 93%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 199 92% 66%;
+    --accent-foreground: 220 20% 18%;
+    --border: 210 30% 88%;
+    --input: 210 30% 88%;
+    --ring: 211 100% 52%;
+    --chart-1: 211 100% 52%;
+    --chart-2: 199 92% 66%;
+    --chart-3: 160 60% 45%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-border: 210 30% 88%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(211 100% 55%), hsl(190 90% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(199 92% 66%), hsl(230 100% 78%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(210 100% 96%), hsl(210 100% 97%)),
+      radial-gradient(ellipse at 80% 100%, hsl(190 80% 92%), hsl(210 100% 97%));
+    --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.92), hsla(210 60% 96% / 0.85));
+  }
+
+  /* 夜航霓光 */
+  html.theme-neon {
+    --background: 240 25% 96%;
+    --foreground: 240 30% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 30% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 30% 15%;
+    --primary: 280 85% 64%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 260 30% 94%;
+    --secondary-foreground: 240 30% 15%;
+    --muted: 260 20% 90%;
+    --muted-foreground: 260 15% 45%;
+    --accent: 130 70% 52%;
+    --accent-foreground: 240 30% 15%;
+    --border: 260 20% 86%;
+    --input: 260 20% 86%;
+    --ring: 280 85% 64%;
+    --chart-1: 280 85% 64%;
+    --chart-2: 130 70% 52%;
+    --chart-3: 220 80% 55%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-border: 260 20% 86%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(280 85% 65%), hsl(320 80% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(220 90% 68%), hsl(160 70% 60%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(260 40% 96%), hsl(240 25% 96%)),
+      radial-gradient(ellipse at 80% 100%, hsl(300 35% 92%), hsl(240 25% 96%));
+    --gradient-card: linear-gradient(145deg, hsla(0 0% 100% / 0.92), hsla(260 30% 94% / 0.85));
+  }
+
+  /* 暗色模式：通用背景与对比度优化（避免纯黑） */
+  html.dark {
+    --foreground: 220 13% 94%;
+    --card: 220 10% 15%;
+    --card-foreground: 220 13% 94%;
+    --popover: 220 10% 15%;
+    --popover-foreground: 220 13% 94%;
+    --secondary: 220 10% 20%;
+    --secondary-foreground: 220 13% 94%;
+    --muted: 220 10% 23%;
+    --muted-foreground: 220 8% 62%;
+    --destructive: 0 70% 55%;
+    --border: 220 10% 26%;
+    --input: 220 10% 26%;
+    --sidebar-background: 220 10% 15%;
+    --sidebar-foreground: 220 13% 94%;
+    --sidebar-accent: 220 10% 20%;
+    --sidebar-accent-foreground: 220 13% 94%;
+    --sidebar-border: 220 10% 26%;
+  }
+
+  /* 暗色模式：各主题背景与主色微调（低饱和、高对比、柔和渐变） */
+  html.dark.theme-minimal {
+    --background: 220 10% 12%;
+    --primary: 0 0% 92%;
+    --primary-foreground: 220 15% 10%;
+    --accent: 0 0% 65%;
+    --ring: 0 0% 92%;
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 70%), hsl(0 0% 92%));
+    --gradient-accent: linear-gradient(135deg, hsl(0 0% 55%), hsl(0 0% 75%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(220 10% 16%), hsl(220 10% 12%)),
+      radial-gradient(ellipse at 80% 100%, hsl(220 10% 18%), hsl(220 10% 12%));
+    --gradient-card: linear-gradient(145deg, hsla(220 10% 18% / 0.9), hsla(220 10% 14% / 0.85));
+  }
+
+  html.dark.theme-moss {
+    --background: 100 12% 11%;
+    --primary: 130 30% 55%;
+    --primary-foreground: 100 20% 8%;
+    --accent: 35 30% 55%;
+    --ring: 130 30% 55%;
+    --gradient-primary: linear-gradient(135deg, hsl(110 28% 45%), hsl(150 30% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(70 25% 55%), hsl(30 25% 55%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(100 15% 15%), hsl(100 12% 11%)),
+      radial-gradient(ellipse at 80% 100%, hsl(140 14% 16%), hsl(100 12% 11%));
+    --gradient-card: linear-gradient(145deg, hsla(100 12% 17% / 0.9), hsla(100 12% 13% / 0.85));
+  }
+
+  html.dark.theme-sunset {
+    --background: 20 18% 12%;
+    --primary: 22 70% 58%;
+    --primary-foreground: 20 25% 8%;
+    --accent: 195 50% 58%;
+    --ring: 22 70% 58%;
+    --gradient-primary: linear-gradient(135deg, hsl(18 65% 52%), hsl(32 75% 58%));
+    --gradient-accent: linear-gradient(135deg, hsl(25 60% 58%), hsl(340 45% 60%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(20 18% 16%), hsl(20 18% 12%)),
+      radial-gradient(ellipse at 80% 100%, hsl(30 18% 17%), hsl(20 18% 12%));
+    --gradient-card: linear-gradient(145deg, hsla(20 18% 18% / 0.9), hsla(20 18% 14% / 0.85));
+  }
+
+  html.dark.theme-cyan {
+    --background: 220 30% 11%;
+    --primary: 210 70% 58%;
+    --primary-foreground: 220 30% 8%;
+    --accent: 190 65% 58%;
+    --ring: 210 70% 58%;
+    --gradient-primary: linear-gradient(135deg, hsl(215 65% 52%), hsl(190 60% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(195 60% 60%), hsl(230 55% 65%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(220 25% 16%), hsl(220 30% 11%)),
+      radial-gradient(ellipse at 80% 100%, hsl(200 25% 17%), hsl(220 30% 11%));
+    --gradient-card: linear-gradient(145deg, hsla(220 30% 17% / 0.9), hsla(220 30% 13% / 0.85));
+  }
+
+  html.dark.theme-neon {
+    --background: 260 22% 11%;
+    --primary: 275 55% 65%;
+    --primary-foreground: 260 25% 8%;
+    --accent: 150 45% 55%;
+    --ring: 275 55% 65%;
+    --gradient-primary: linear-gradient(135deg, hsl(275 50% 58%), hsl(310 50% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(220 55% 60%), hsl(160 45% 55%));
+    --gradient-background: radial-gradient(ellipse at 20% 0%, hsl(260 22% 16%), hsl(260 22% 11%)),
+      radial-gradient(ellipse at 80% 100%, hsl(300 22% 17%), hsl(260 22% 11%));
+    --gradient-card: linear-gradient(145deg, hsla(260 22% 17% / 0.9), hsla(260 22% 13% / 0.85));
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-size: calc(16px * var(--font-scale));
+  }
+
+  body {
+    @apply text-foreground antialiased;
+    background: var(--gradient-background);
+    background-attachment: fixed;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    transition: background 300ms ease, color 300ms ease, border-color 300ms ease;
+  }
+
+  /* iOS 连续圆角与玻璃拟态工具类 */
+  .ios-card {
+    @apply rounded-2xl backdrop-blur-2xl border border-border/40 shadow-[0_8px_24px_-8px_hsl(var(--foreground)/8%)];
+    background: var(--gradient-card);
+    transition: background 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
+  }
+
+  .ios-frost {
+    @apply backdrop-blur-2xl;
+    background: var(--gradient-card);
+    transition: background 300ms ease, border-color 300ms ease;
+  }
+
+  .ios-btn {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition-all active:scale-95 hover:opacity-90;
+    background-image: var(--gradient-primary);
+    transition: opacity 200ms ease, transform 150ms ease, background-image 300ms ease;
+  }
+
+  /* 渐变文字 */
+  .gradient-text {
+    background-image: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 隐藏滚动条但保留滚动能力 */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  /* 细腻的 iOS 按压反馈 */
+  .tap-highlight-transparent {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}

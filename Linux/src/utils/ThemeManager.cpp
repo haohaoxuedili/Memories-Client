@@ -178,10 +178,10 @@ QComboBox[uploadOptionCombo="true"]:hover { border-color: rgba(141,198,255,0.40)
 QComboBox[uploadOptionCombo="true"]:focus { border-color: rgba(170,215,255,0.62); background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(141,198,255,0.30),stop:0.48 rgba(72,187,173,0.22),stop:1 rgba(216,199,255,0.22)); }
 QComboBox[uploadOptionCombo="true"]::drop-down { width: 34px; border: none; border-left: 1px solid rgba(189,235,255,0.18); border-top-right-radius: 14px; border-bottom-right-radius: 14px; background: rgba(141,198,255,0.09); }
 QComboBox[uploadOptionCombo="true"]::down-arrow { image: none; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid #bfe3ff; margin-right: 12px; }
-QComboBox[uploadOptionCombo="true"] QAbstractItemView, QAbstractItemView[uploadOptionPopup="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(88,142,184,0.94),stop:0.50 rgba(56,150,143,0.92),stop:1 rgba(126,105,172,0.92)); border: 1px solid rgba(189,235,255,0.34); border-radius: 15px; padding: 7px; outline: none; selection-background-color: rgba(189,235,255,0.26); }
-QWidget[uploadOptionPopupViewport="true"] { background: transparent; border-radius: 14px; }
-QComboBox[uploadOptionCombo="true"] QAbstractItemView::item, QAbstractItemView[uploadOptionPopup="true"]::item { min-height: 28px; padding: 8px 14px; margin: 2px; border-radius: 9px; color: #f3fbff; background: rgba(189,235,255,0.10); }
-QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:hover, QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:selected, QAbstractItemView[uploadOptionPopup="true"]::item:hover, QAbstractItemView[uploadOptionPopup="true"]::item:selected { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 rgba(189,235,255,0.34),stop:1 rgba(216,199,255,0.28)); color: #ffffff; }
+QComboBox[uploadOptionCombo="true"] QAbstractItemView, QAbstractItemView[uploadOptionPopup="true"] { background: #182432; border: 1px solid rgba(189,235,255,0.34); border-radius: 15px; padding: 7px; outline: none; color: #f3fbff; selection-color: #ffffff; selection-background-color: rgba(141,198,255,0.28); }
+QWidget[uploadOptionPopupViewport="true"] { background: #182432; border-radius: 14px; color: #f3fbff; }
+QComboBox[uploadOptionCombo="true"] QAbstractItemView::item, QAbstractItemView[uploadOptionPopup="true"]::item { min-height: 28px; padding: 8px 14px; margin: 2px; border-radius: 9px; color: #f3fbff; background: #203044; }
+QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:hover, QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:selected, QAbstractItemView[uploadOptionPopup="true"]::item:hover, QAbstractItemView[uploadOptionPopup="true"]::item:selected { background: #335775; color: #ffffff; }
 QGroupBox { background: rgba(18,27,38,0.60); border: 1px solid rgba(189,213,240,0.10); border-radius: 18px; padding: 24px 16px 16px; font-weight: 800; color: #edf5ff; }
 QGroupBox::title { padding: 4px 14px; margin-left: 16px; background: rgba(255,255,255,0.08); border-radius: 9px; color: #dfeeff; }
 QTabWidget::pane { background: rgba(18,27,38,0.42); border: 1px solid rgba(189,213,240,0.09); border-radius: 14px; }
@@ -206,10 +206,14 @@ QScrollBar[uploadQueueScrollBar="true"]::add-page:vertical, QScrollBar[uploadQue
 QScrollBar:horizontal { background: rgba(255,255,255,0.03); height: 6px; border-radius: 3px; }
 QScrollBar::handle:horizontal { background: rgba(255,255,255,0.12); border-radius: 3px; }
 QLabel[galleryState="true"] { color: #a7b6c8; font-size: 15px; font-weight: 600; padding: 22px; }
+QFrame[galleryHero="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 rgba(141,198,255,0.14),stop:0.48 rgba(72,187,173,0.10),stop:1 rgba(255,255,255,0.06)); border-bottom: 1px solid rgba(189,213,240,0.10); border-top-left-radius: 20px; border-top-right-radius: 20px; }
+QLabel[galleryTitle="true"] { color: #f6fbff; font-size: 24px; font-weight: 900; }
+QLabel[gallerySubtitle="true"] { color: #9fb1c6; font-size: 13px; font-weight: 650; }
 QLabel[galleryMeta="true"] { color: #9fb0c5; font-size: 12px; font-weight: 700; padding: 0 4px; }
-QToolButton[galleryThumb="true"] { background: rgba(255,255,255,0.08); border-radius: 14px; border: 1px solid rgba(189,213,240,0.13); padding: 4px; }
-QToolButton[galleryThumb="true"]:hover { background: rgba(255,255,255,0.13); border-color: rgba(141,198,255,0.34); }
-QToolButton[galleryThumb="true"][selected="true"] { background: rgba(141,198,255,0.13); border: 2px solid rgba(141,198,255,0.58); }
+QPushButton[galleryAction="true"] { min-width: 92px; }
+QToolButton[galleryThumb="true"] { background: rgba(255,255,255,0.08); border-radius: 16px; border: 1px solid rgba(189,213,240,0.13); padding: 5px; }
+QToolButton[galleryThumb="true"]:hover { background: rgba(255,255,255,0.14); border-color: rgba(141,198,255,0.40); }
+QToolButton[galleryThumb="true"][selected="true"] { background: rgba(141,198,255,0.14); border: 2px solid rgba(141,198,255,0.64); }
 QToolButton[profileAction="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(255,255,255,0.12),stop:1 rgba(156,199,255,0.07)); border: 1px solid rgba(148,163,184,0.16); border-radius: 14px; padding: 8px 12px; color: #dce7f5; font-weight: 800; text-align: left; }
 QToolButton[profileAction="true"]:hover { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(255,255,255,0.18),stop:1 rgba(156,199,255,0.13)); border-color: rgba(156,199,255,0.28); }
 QProgressBar { min-height: 10px; max-height: 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.06); }
@@ -229,6 +233,11 @@ QLabel[profileMeta="true"], QLabel[profileHint="true"] { color: #9fb1c6; font-si
 QLabel[profileStatus="ok"] { color: #79d8cc; background: rgba(72,187,173,0.12); border: 1px solid rgba(72,187,173,0.20); border-radius: 10px; padding: 7px 10px; font-weight: 800; }
 QLabel[profileStatus="idle"] { color: #9fb1c6; background: rgba(255,255,255,0.05); border: 1px solid rgba(189,213,240,0.10); border-radius: 10px; padding: 7px 10px; font-weight: 700; }
 QGroupBox[profileSection="true"] { background: rgba(18,27,38,0.68); border-color: rgba(189,213,240,0.13); }
+QFrame[profileHero="true"], QFrame[uploadHero="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 rgba(255,255,255,0.10),stop:0.48 rgba(141,198,255,0.10),stop:1 rgba(72,187,173,0.08)); border: 1px solid rgba(189,213,240,0.11); border-radius: 18px; }
+QLabel[pageTitle="true"] { color: #f6fbff; font-size: 23px; font-weight: 900; }
+QLabel[pageSubtitle="true"] { color: #9fb1c6; font-size: 13px; font-weight: 650; }
+QLabel[sectionTitle="true"] { color: #edf5ff; font-size: 14px; font-weight: 900; }
+QLabel[sectionMeta="true"] { color: #9fb1c6; font-size: 12px; font-weight: 650; }
 QLabel[settingsLabel="true"] { color: #dbeafe; font-size: 13px; font-weight: 850; }
 QPushButton[stepperBtn="true"] { font-size: 18px; font-weight: 800; border-radius: 9px; padding: 0; min-height: 30px; }
 QToolTip { background: rgba(30,36,48,0.96); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; }
@@ -278,10 +287,10 @@ QComboBox[uploadOptionCombo="true"]:hover { border-color: rgba(255,255,255,0.98)
 QComboBox[uploadOptionCombo="true"]:focus { border-color: %8; background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(255,255,255,1.00),stop:0.48 %9,stop:1 %2); }
 QComboBox[uploadOptionCombo="true"]::drop-down { width: 34px; border: none; border-left: 1px solid rgba(255,255,255,0.64); border-top-right-radius: 14px; border-bottom-right-radius: 14px; background: rgba(255,255,255,0.34); }
 QComboBox[uploadOptionCombo="true"]::down-arrow { image: none; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid %8; margin-right: 12px; }
-QComboBox[uploadOptionCombo="true"] QAbstractItemView, QAbstractItemView[uploadOptionPopup="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 %9,stop:0.50 %2,stop:1 %5); border: 1px solid rgba(255,255,255,0.90); border-radius: 15px; padding: 7px; outline: none; selection-background-color: %9; }
-QWidget[uploadOptionPopupViewport="true"] { background: transparent; border-radius: 14px; }
-QComboBox[uploadOptionCombo="true"] QAbstractItemView::item, QAbstractItemView[uploadOptionPopup="true"]::item { min-height: 28px; padding: 8px 14px; margin: 2px; border-radius: 9px; color: %1; background: rgba(255,255,255,0.42); }
-QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:hover, QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:selected, QAbstractItemView[uploadOptionPopup="true"]::item:hover, QAbstractItemView[uploadOptionPopup="true"]::item:selected { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 rgba(255,255,255,0.74),stop:1 %9); color: %8; }
+QComboBox[uploadOptionCombo="true"] QAbstractItemView, QAbstractItemView[uploadOptionPopup="true"] { background: rgba(255,255,255,0.98); border: 1px solid rgba(255,255,255,0.90); border-radius: 15px; padding: 7px; outline: none; color: %1; selection-color: %8; selection-background-color: %9; }
+QWidget[uploadOptionPopupViewport="true"] { background: rgba(255,255,255,0.98); border-radius: 14px; color: %1; }
+QComboBox[uploadOptionCombo="true"] QAbstractItemView::item, QAbstractItemView[uploadOptionPopup="true"]::item { min-height: 28px; padding: 8px 14px; margin: 2px; border-radius: 9px; color: %1; background: rgba(255,255,255,0.74); }
+QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:hover, QComboBox[uploadOptionCombo="true"] QAbstractItemView::item:selected, QAbstractItemView[uploadOptionPopup="true"]::item:hover, QAbstractItemView[uploadOptionPopup="true"]::item:selected { background: %9; color: %8; }
 QGroupBox { background: qradialgradient(cx:0.45,cy:0.12,radius:0.96,fx:0.45,fy:0.12,stop:0 rgba(255,255,255,0.98),stop:0.52 %5,stop:1 rgba(255,255,255,0.78)); border: 1px solid rgba(255,255,255,0.78); border-radius: 18px; padding: 24px 16px 16px; font-weight: 800; color: %1; }
 QGroupBox::title { padding: 4px 14px; margin-left: 16px; background: rgba(255,255,255,0.74); border-radius: 9px; }
 QTabWidget::pane { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(255,255,255,0.66),stop:1 rgba(255,255,255,0.40)); border: 1px solid rgba(255,255,255,0.68); border-radius: 14px; }
@@ -297,10 +306,14 @@ QListWidget[uploadQueueList="true"]::item:selected { background: qlineargradient
 QListWidget::item:hover { background: rgba(255,255,255,0.72); color: %8; }
 QListWidget::item:selected { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 %9,stop:1 rgba(255,255,255,0.88)); color: %8; }
 QLabel[galleryState="true"] { color: rgba(125,147,153,0.92); font-size: 15px; font-weight: 600; padding: 22px; }
+QFrame[galleryHero="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 rgba(255,255,255,0.92),stop:0.48 %9,stop:1 %2); border-bottom: 1px solid rgba(255,255,255,0.76); border-top-left-radius: 20px; border-top-right-radius: 20px; }
+QLabel[galleryTitle="true"] { color: %1; font-size: 24px; font-weight: 900; }
+QLabel[gallerySubtitle="true"] { color: %7; font-size: 13px; font-weight: 650; }
 QLabel[galleryMeta="true"] { color: rgba(125,147,153,0.92); font-size: 12px; font-weight: 700; padding: 0 4px; }
-QToolButton[galleryThumb="true"] { background: rgba(255,255,255,0.62); border-radius: 14px; border: 1px solid rgba(255,255,255,0.78); padding: 4px; }
-QToolButton[galleryThumb="true"]:hover { background: rgba(255,255,255,0.86); border-color: rgba(255,255,255,0.98); }
-QToolButton[galleryThumb="true"][selected="true"] { background: rgba(255,255,255,0.78); border: 2px solid %8; }
+QPushButton[galleryAction="true"] { min-width: 92px; }
+QToolButton[galleryThumb="true"] { background: rgba(255,255,255,0.64); border-radius: 16px; border: 1px solid rgba(255,255,255,0.78); padding: 5px; }
+QToolButton[galleryThumb="true"]:hover { background: rgba(255,255,255,0.88); border-color: rgba(255,255,255,0.98); }
+QToolButton[galleryThumb="true"][selected="true"] { background: rgba(255,255,255,0.80); border: 2px solid %8; }
 QToolButton[profileAction="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(255,255,255,0.84),stop:1 rgba(255,255,255,0.58)); border: 1px solid rgba(255,255,255,0.76); border-radius: 14px; padding: 8px 12px; color: %7; font-weight: 800; text-align: left; }
 QToolButton[profileAction="true"]:hover { background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 rgba(255,255,255,0.96),stop:1 %9); border-color: rgba(255,255,255,0.96); color: %8; }
 QScrollBar:vertical { background: rgba(255,255,255,0.42); width: 6px; border-radius: 3px; }
@@ -329,6 +342,11 @@ QLabel[profileMeta="true"], QLabel[profileHint="true"] { color: %7; font-size: 1
 QLabel[profileStatus="ok"] { color: %8; background: %9; border: 1px solid rgba(255,255,255,0.80); border-radius: 10px; padding: 7px 10px; font-weight: 800; }
 QLabel[profileStatus="idle"] { color: %7; background: rgba(255,255,255,0.60); border: 1px solid rgba(255,255,255,0.76); border-radius: 10px; padding: 7px 10px; font-weight: 700; }
 QGroupBox[profileSection="true"] { background: rgba(255,255,255,0.78); border-color: rgba(255,255,255,0.84); }
+QFrame[profileHero="true"], QFrame[uploadHero="true"] { background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 rgba(255,255,255,0.92),stop:0.48 %9,stop:1 %2); border: 1px solid rgba(255,255,255,0.84); border-radius: 18px; }
+QLabel[pageTitle="true"] { color: %1; font-size: 23px; font-weight: 900; }
+QLabel[pageSubtitle="true"] { color: %7; font-size: 13px; font-weight: 650; }
+QLabel[sectionTitle="true"] { color: %1; font-size: 14px; font-weight: 900; }
+QLabel[sectionMeta="true"] { color: %7; font-size: 12px; font-weight: 650; }
 QLabel[settingsLabel="true"] { color: %1; font-size: 13px; font-weight: 850; }
 QPushButton[stepperBtn="true"] { font-size: 18px; font-weight: 800; border-radius: 9px; padding: 0; min-height: 30px; }
 QToolTip { background: rgba(255,255,255,0.95); color: %1; border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; padding: 6px 12px; }

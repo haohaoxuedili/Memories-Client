@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QProgressBar>
 #include <QLabel>
+#include <QFrame>
 #include <QToolButton>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -68,11 +69,29 @@ void GalleryWidget::setupUi() {
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
+    auto* heroPanel = new QFrame(this);
+    heroPanel->setProperty("galleryHero", true);
+    auto* heroLayout = new QHBoxLayout(heroPanel);
+    heroLayout->setContentsMargins(22, 18, 22, 16);
+    heroLayout->setSpacing(16);
+
+    auto* heroCopy = new QVBoxLayout();
+    heroCopy->setContentsMargins(0, 0, 0, 0);
+    heroCopy->setSpacing(4);
+    auto* titleLabel = new QLabel(tr("图片广场"), heroPanel);
+    titleLabel->setProperty("galleryTitle", true);
+    auto* subtitleLabel = new QLabel(tr("浏览、选择并分享你的 Memories 图片"), heroPanel);
+    subtitleLabel->setProperty("gallerySubtitle", true);
+    heroCopy->addWidget(titleLabel);
+    heroCopy->addWidget(subtitleLabel);
+    heroLayout->addLayout(heroCopy, 1);
+    heroLayout->addWidget(m_selectModeBtn);
+    mainLayout->addWidget(heroPanel);
+
     // Batch toolbar
     auto* batchBar = new QHBoxLayout();
-    batchBar->setContentsMargins(18, 12, 18, 10);
+    batchBar->setContentsMargins(22, 12, 22, 8);
     batchBar->setSpacing(10);
-    batchBar->addWidget(m_selectModeBtn);
 
     m_selectCountLabel->setProperty("galleryMeta", true);
     m_selectCountLabel->setVisible(false);
@@ -110,11 +129,12 @@ void GalleryWidget::setupUi() {
         btn->setProperty("flat", true);
         btn->setStyleSheet("");
     }
+    m_selectModeBtn->setProperty("galleryAction", true);
     mainLayout->addLayout(batchBar);
 
     // Grid
-    m_flowLayout->setContentsMargins(18, 14, 18, 18);
-    m_flowLayout->setSpacing(10);
+    m_flowLayout->setContentsMargins(22, 16, 22, 18);
+    m_flowLayout->setSpacing(12);
     m_gridContainer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
     m_scrollArea->setWidget(m_gridContainer);
     m_scrollArea->setWidgetResizable(true);
