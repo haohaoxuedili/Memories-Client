@@ -112,6 +112,7 @@ public class MainActivity extends Activity {
     private TextView title;
     private long nextAfterId = 0;
     private boolean galleryLoading;
+    private Button loadMoreButton;
     private final java.util.Set<String> syncedUrls = new java.util.HashSet<>();
     private String selectedOutputFormat = AppConfig.DEFAULT_OUTPUT_FORMAT;
     private ServerSocket oauthServer;
@@ -437,29 +438,25 @@ public class MainActivity extends Activity {
     }
 
     private void startOAuth() {
-        if (!AppConfig.isOAuthConfigured()) {
-            new AlertDialog.Builder(this)
-                    .setTitle("OAuth 未配置")
-                    .setMessage("请先复制 app-config.example.properties 为 app/src/main/assets/app-config.properties，并填写 OAuth 与 API 配置。")
+        api.oauthStart(uiCallback(url -> {
+            if (url.isEmpty()) {
+                toast("获取授权地址失败");
+                return;
+            }
+            Uri uri = Uri.parse(url);
+            String state = uri.getQueryParameter("state");
+            String redirectUri = uri.getQueryParameter("redirect_uri");
+            showWebViewOverlay(url, state != null ? state : "", redirectUri != null ? redirectUri : "");
+        }, message -> {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle("OAuth 配置错误")
+                    .setMessage("获取授权地址失败: " + message + "\n\n请确认服务端已配置 OAuth 参数（prefix、client_id、redirect_uri）。")
                     .setPositiveButton("确定", null)
                     .show();
-            return;
-        }
-        String state = UUID.randomUUID().toString();
-        String codeVerifier = createCodeVerifier();
-        Uri uri = Uri.parse(AppConfig.OAUTH_AUTHORIZE_URL).buildUpon()
-                .appendQueryParameter("response_type", "code")
-                .appendQueryParameter("client_id", AppConfig.OAUTH_CLIENT_ID)
-                .appendQueryParameter("redirect_uri", AppConfig.OAUTH_REDIRECT_URI)
-                .appendQueryParameter("scope", AppConfig.OAUTH_SCOPE)
-                .appendQueryParameter("state", state)
-                .appendQueryParameter("code_challenge", createCodeChallenge(codeVerifier))
-                .appendQueryParameter("code_challenge_method", "S256")
-                .build();
-        showWebViewOverlay(uri.toString(), state, codeVerifier);
+        }));
     }
 
-    private void showWebViewOverlay(String url, String expectedState, String codeVerifier) {
+    private void showWebViewOverlay(String url, String expectedState, String redirectUri) {
         FrameLayout overlay = new FrameLayout(this);
         overlay.setBackgroundColor(Color.argb(200, 0, 0, 0));
         overlay.setClickable(true);
@@ -519,12 +516,12 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String requestUrl = request.getUrl().toString();
-                if (requestUrl.startsWith(AppConfig.OAUTH_REDIRECT_URI)) {
+                if (redirectUri.isEmpty() || requestUrl.startsWith(redirectUri)) {
                     if (codeExchanged) return true;
                     codeExchanged = true;
-                    Uri redirectUri = Uri.parse(requestUrl);
-                    String code = redirectUri.getQueryParameter("code");
-                    String state = redirectUri.getQueryParameter("state");
+                    Uri callbackUri = Uri.parse(requestUrl);
+                    String code = callbackUri.getQueryParameter("code");
+                    String state = callbackUri.getQueryParameter("state");
                     if (code == null || code.isEmpty() || !expectedState.equals(state)) {
                         mainHandler.post(() -> {
                             toast("OAuth 回调无效");
@@ -536,25 +533,19 @@ public class MainActivity extends Activity {
                         webView.setVisibility(View.GONE);
                         progress.setVisibility(View.VISIBLE);
                     });
-                    api.exchangeCode(code, codeVerifier, uiCallback(token -> api.userInfo(token, uiCallback(user -> {
+                    api.oauthCallback(code, state, uiCallback(user -> {
                         session = user;
                         store.saveSession(user);
                         theme = ThemeConfig.load(store.prefs(), session.qq);
                         mainHandler.post(() -> {
                             toast("登录成功");
                             hideWebViewOverlay();
-                            // 确保正确切换到主界面
                             shellWrapper = null;
                             showShell(0);
                         });
                     }, message -> {
                         mainHandler.post(() -> {
-                            toast("获取用户信息失败: " + message);
-                            hideWebViewOverlay();
-                        });
-                    })), message -> {
-                        mainHandler.post(() -> {
-                            toast("令牌交换失败: " + message);
+                            toast("登录失败: " + message);
                             hideWebViewOverlay();
                         });
                     }));
@@ -635,12 +626,12 @@ public class MainActivity extends Activity {
                     mainHandler.post(() -> toast("OAuth 回调无效"));
                     return;
                 }
-                api.exchangeCode(code, codeVerifier, uiCallback(token -> api.userInfo(token, uiCallback(user -> {
+                api.oauthCallback(code, state, uiCallback(user -> {
                     session = user;
                     store.saveSession(user);
                     theme = ThemeConfig.load(store.prefs(), session.qq);
                     showShell(0);
-                }, this::toast)), this::toast));
+                }, this::toast));
             } catch (Exception exception) {
                 mainHandler.post(() -> toast("无法监听 " + AppConfig.OAUTH_REDIRECT_URI + "：" + exception.getMessage()));
             } finally {
@@ -789,16 +780,16 @@ public class MainActivity extends Activity {
         grid.setColumnCount(2);
         galleryGrid = grid;
         page.addView(grid, matchWrap());
-        Button more = button("加载更多", "ic_load_more", view -> loadGallery(grid));
+        loadMoreButton = button("加载更多", "ic_load_more", view -> loadGallery(grid));
         GradientDrawable strokeBg = new GradientDrawable();
         strokeBg.setColor(Color.TRANSPARENT);
         strokeBg.setCornerRadius(dp(18));
         strokeBg.setStroke(dp(1), blend(theme.primaryButton, theme.primaryText, 0.35f));
-        more.setBackground(strokeBg);
-        more.setGravity(Gravity.CENTER);
+        loadMoreButton.setBackground(strokeBg);
+        loadMoreButton.setGravity(Gravity.CENTER);
         LinearLayout moreRow = horizontal();
         moreRow.setGravity(Gravity.CENTER);
-        moreRow.addView(more, new LinearLayout.LayoutParams(dp(160), dp(44)));
+        moreRow.addView(loadMoreButton, new LinearLayout.LayoutParams(dp(160), dp(44)));
         page.addView(moreRow, matchWrap());
         scroll.addView(page);
         content.addView(scroll);
@@ -925,8 +916,16 @@ public class MainActivity extends Activity {
         if (grid == null) return;
         for (int i = 0; i < grid.getChildCount(); i++) {
             View child = grid.getChildAt(i);
-            if (child instanceof FrameLayout && child.getTag() instanceof Integer) {
-                int realIndex = (Integer) child.getTag();
+            if (child instanceof FrameLayout) {
+                Object tag = child.getTag();
+                int realIndex;
+                if (tag instanceof Integer) {
+                    realIndex = (Integer) tag;
+                } else if (tag instanceof ImageItem) {
+                    realIndex = galleryItems.indexOf(tag);
+                } else {
+                    continue;
+                }
                 refreshCardSelection((FrameLayout) child, realIndex);
             }
         }
@@ -1063,12 +1062,13 @@ public class MainActivity extends Activity {
         final long requestAfterId = nextAfterId;
         api.images(requestAfterId, uiCallback(page -> {
             nextAfterId = page.nextAfterId == null ? nextAfterId : page.nextAfterId;
-            // 记录服务端确认的 URL
+            if (page.nextAfterId == null && loadMoreButton != null) {
+                loadMoreButton.setVisibility(View.GONE);
+            }
             for (ImageItem item : page.items) {
                 syncedUrls.add(item.url);
             }
             List<ImageItem> added = mergeGalleryItems(page.items);
-            // 当全部页面加载完毕时，清理本地缓存中已被服务端删除的条目
             if (page.nextAfterId == null && !syncedUrls.isEmpty()) {
                 int before = galleryItems.size();
                 galleryItems.removeIf(item -> !syncedUrls.contains(item.url));
@@ -1134,7 +1134,7 @@ public class MainActivity extends Activity {
         FrameLayout card = new FrameLayout(this);
         int cardSize = (getResources().getDisplayMetrics().widthPixels - dp(44)) / 2;
         card.setLayoutParams(new FrameLayout.LayoutParams(cardSize, cardSize));
-        card.setTag(index);
+        card.setTag(item);
         if (Build.VERSION.SDK_INT >= 21) {
             card.setClipToOutline(true);
             card.setOutlineProvider(new android.view.ViewOutlineProvider() {
@@ -1154,13 +1154,14 @@ public class MainActivity extends Activity {
         // 选择标记层 - 与图片框完全一致的圆角遮罩
         FrameLayout checkOverlay = new FrameLayout(this);
         GradientDrawable overlayBg = new GradientDrawable();
-        overlayBg.setColor(Color.argb(batchSelectedIndices.contains(index) ? 130 : 0, 0, 0, 0));
+        int itemIndex = galleryItems.indexOf(item);
+        overlayBg.setColor(Color.argb(batchSelectedIndices.contains(itemIndex) ? 130 : 0, 0, 0, 0));
         overlayBg.setCornerRadius(dp(14));
         checkOverlay.setBackground(overlayBg);
         checkOverlay.setClickable(false);
 
         // 选中勾号
-        if (batchSelectedIndices.contains(index)) {
+        if (batchSelectedIndices.contains(itemIndex)) {
             TextView checkMark = new TextView(this);
             checkMark.setText("✓");
             checkMark.setTextColor(Color.WHITE);
@@ -1176,9 +1177,11 @@ public class MainActivity extends Activity {
         card.addView(checkOverlay, new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        // 点击/长按事件 - 从 tag 读取真实索引
+        // 点击/长按事件 - 从 galleryItems 中查找真实索引
         card.setOnClickListener(view -> {
-            int idx = (Integer) view.getTag();
+            ImageItem clickedItem = (ImageItem) view.getTag();
+            int idx = galleryItems.indexOf(clickedItem);
+            if (idx < 0) return;
             if (batchSelectMode) {
                 toggleBatchSelection(idx);
             } else {
@@ -1187,8 +1190,11 @@ public class MainActivity extends Activity {
         });
         card.setOnLongClickListener(view -> {
             if (!batchSelectMode) {
-                int idx = (Integer) view.getTag();
-                enterBatchMode(idx);
+                ImageItem clickedItem = (ImageItem) view.getTag();
+                int idx = galleryItems.indexOf(clickedItem);
+                if (idx >= 0) {
+                    enterBatchMode(idx);
+                }
             }
             return true;
         });

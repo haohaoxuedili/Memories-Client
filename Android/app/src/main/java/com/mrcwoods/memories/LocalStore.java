@@ -74,7 +74,7 @@ public class LocalStore {
         for (int index = 0; index < array.length(); index++) {
             JSONObject json = array.optJSONObject(index);
             if (json != null) {
-                items.add(new ImageItem(json.optLong("id"), json.optString("url"), json.optLong("uploaded_at")));
+                items.add(new ImageItem(json.optLong("id"), json.optString("url"), json.optInt("status", 0), json.optLong("uploaded_at")));
             }
         }
         return items;
